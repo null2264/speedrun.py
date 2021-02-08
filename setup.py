@@ -6,12 +6,12 @@ with open('requirements.txt') as f:
 
 setup(
     name="speedrun.py",
-    packages=["speedrun"],
+    packages=["speedrunpy"],
     version="0.0.1",
     license="MIT",
     description="Async speedrun.com API wrapper",
     author="null2264",
-    install_requires=requirements
+    install_requires=requirements,
     python_requires='>=3.8',
     classifiers=[
         'Development Status :: 3 - Alpha',

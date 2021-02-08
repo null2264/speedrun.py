@@ -6,9 +6,9 @@ Simple async wrapper for speedrun.com's API
 
 ```python
 import aiohttp
-import speedrun
+from speedrunpy import SpeedrunPy
 
-src = speedrun.SpeedrunPy(session=aiohttp.ClientSession())
+src = SpeedrunPy(session=aiohttp.ClientSession())
 game = await src.get_game("Super Mario Sunshine")
 print(game.name)
 print(game.id)
