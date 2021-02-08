@@ -7,10 +7,12 @@ with open('requirements.txt') as f:
 setup(
     name="speedrun.py",
     packages=["speedrunpy"],
-    version="0.0.1",
+    version="0.0.2",
     license="MIT",
     description="Async speedrun.com API wrapper",
     author="null2264",
+    author_email="palembani@gmail.com",
+    url="https://github.com/null2264/speedrun.py",
     install_requires=requirements,
     python_requires='>=3.8',
     classifiers=[

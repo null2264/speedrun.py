@@ -9,9 +9,9 @@ import aiohttp
 from speedrunpy import SpeedrunPy
 
 src = SpeedrunPy(session=aiohttp.ClientSession())
-game = await src.get_game("Super Mario Sunshine")
-print(game.name)
-print(game.id)
+games = await src.get_games("Super Mario Sunshine")
+print(games[0].name)
+print(games[0].id)
 
 # output
 Super Mario Sunshine

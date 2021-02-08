@@ -52,23 +52,23 @@ class Asset:
         """
         self.url = data["uri"]
         self.uri = self.url
-        self.height = data["height"]
         self.width = data["width"]
+        self.height = data["height"]
 
     def __str__(self):
         return self.url
 
     def __repr__(self):
-        return "<{} ({}x{})>".format(self.url, self.height, self.width)
+        return "<{} ({}x{})>".format(self.url, self.width, self.height)
 
 
 class Game:
-    def __init__(self, data: dict, embedded: bool=False, embeds: list=[]):
+    def __init__(self, data: dict, pagination: dict, embedded: bool=False, embeds: list=[]):
         """
         Object for `/games/`
         """
         self.rawData = data
-        gameData = self.rawData["data"][0] if not embedded else self.rawData
+        gameData = self.rawData
 
         self.id = gameData["id"]
         self.name = gameData["names"]["international"]
@@ -86,7 +86,7 @@ class Game:
         self.platforms = gameData["platforms"]
 
         if not embedded:
-            self.page = Pagination(data["pagination"])
+            self.page = Pagination(pagination)
             if "levels" in embeds:
                 self.levels = [Level(lev, embedded=True) for lev in gameData["levels"]["data"]]
             if "categories" in embeds:
@@ -103,6 +103,37 @@ class Game:
         return "{} (ID: {} | {})".format(self.name, self.id, self.releaseYear)
 
 
+class Run:
+    def __init__(self, data, pagination, embedded: bool=False, embeds: list=[]):
+        """
+        Object for `/runs/`
+        """
+        self.rawData = data
+        runData = self.rawData
+        self.id = runData["id"]
+        self.weblink = runData["weblink"]
+        self.game = runData["game"]
+        self.level = runData["level"]
+        self.category = runData["category"]
+        try:
+            self.videos = [vid["uri"] for vid in runData["videos"]["links"]]
+        except TypeError:
+            self.videos = []
+        self.comment = runData["comment"]
+        self.datePlayed = runData["date"]
+
+        # Stuff that overwritten by embeds
+        self.players = runData["players"]
+
+        if not embedded:
+            self.page = Pagination(pagination)
+            if "players" in embeds:
+                self.players = [Runner(runner, embedded=True) for runner in self.players["data"]]
+
+    def __str__(self):
+        return self.id
+
+
 class Runner:
     def __init__(self, data, embedded=False):
         """
@@ -110,11 +141,19 @@ class Runner:
         """
         self.rawData = data
         runnerData = self.rawData["data"][0] if not embedded else self.rawData
-        self.id = data["id"]
-        self.name = runnerData["names"]["international"]
+        
+        try:
+            self.id = runnerData["id"]
+            self.type = "user"
+        except KeyError:
+            self.id = None
+            self.type = "guest"
+        
+        self.name = runnerData["names"]["international"] if self.type == "user" else runnerData["name"]
         self.nameInt = self.name
-        self.nameJapan = runnerData["names"]["japanese"]
-        self.weblink = runnerData["weblink"]
+        self.nameJapan = runnerData["names"]["japanese"] if self.type == "user" else None
+
+        self.weblink = runnerData["weblink"] if self.type == "user" else None
 
     def __str__(self):
         return self.name
@@ -189,7 +228,7 @@ class SpeedrunPy:
         async with self.session.get(self.baseUrl + _type + query) as res:
             return json.loads(await res.text())
 
-    async def get_game(self, name: str="", **kwargs):
+    async def get_games(self, name: str="", **kwargs):
         """
         Get game data from speedrun.com api
 
@@ -218,19 +257,67 @@ class SpeedrunPy:
             "variables",
         )
 
-        embeds = kwargs.get("embeds", [])
-        page = kwargs.get("page", 0)
-        perPage = kwargs.get("perPage", 100)
+        embeds = kwargs.pop("embeds", [])
+        page = kwargs.pop("page", 0)
+        perPage = kwargs.pop("perPage", 100)
 
-        params = {"name": name, "embed": ",".join([e for e in embeds if e in availableEmbeds]), "offset": perPage*page}
+        params = {
+            "name": name,
+            "embed": ",".join([e for e in embeds if e in availableEmbeds]),
+            "max": perPage,
+            "offset": perPage*page,
+            **kwargs,
+        }
         query = urllib.parse.urlencode(params)
-        return Game(await self.get("/games", "?{}".format(query)), embeds=embeds)
+        games = await self.get("/games", "?{}".format(query))
+        return [Game(game, games["pagination"], embeds=embeds) for game in games["data"]]
+
+    async def get_runs(self, name: str = "", **kwargs):
+        """
+        Get runs data from speedrun.com api
+
+        Parameters
+        ----------
+        name
+            Name/Abbreviation of the game
+        page
+            Page count
+        perPage
+            Game per page
+        embeds
+            SRC's Embeds
+        """
+        availableEmbeds = (
+            "game",
+            "category",
+            "level",
+            "players",
+            "region",
+            "platform",
+        )
+
+        embeds = kwargs.pop("embeds", [])
+        page = kwargs.pop("page", 0)
+        perPage = kwargs.pop("perPage", 100)
+
+        params = {
+            "name": name, 
+            "embed": ",".join([e for e in embeds if e in availableEmbeds]), 
+            "max": perPage,
+            "offset": perPage*page,
+            **kwargs
+        }
+        query = urllib.parse.urlencode(params)
+        runs = await self.get("/runs", "?{}".format(query))
+        return [Run(run, runs["pagination"], embeds=embeds) for run in runs["data"]]
 
 # Testing stuff
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     src = SpeedrunPy()
     # res = await src.get_game("Super Mario Sunshine", embeds=["platforms"])
-    game = loop.run_until_complete(src.get_game("Super Mario Sunshine", embeds=["levels"]))
-    print(game.assets)
-    print(game.levels[0].name)
+    game = loop.run_until_complete(src.get_games("Super Mario Sunshine", embeds=["levels"]))
+    print(game[0].assets)
+    print(game[0].levels[0].name)
+    # run = loop.run_until_complete(src.get_runs(embeds=["players"]))
+    # print(run[4].players[0].name)
