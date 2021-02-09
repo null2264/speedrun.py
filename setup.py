@@ -1,8 +1,12 @@
-from distutils.core import setup
+from setuptools import setup
 
 requirements = []
 with open('requirements.txt') as f:
   requirements = f.read().splitlines()
+
+readme=""
+with open('README.md') as f:
+    readme = f.read()
 
 setup(
     name="speedrun.py",
@@ -10,6 +14,8 @@ setup(
     version="0.0.3",
     license="MIT",
     description="Async speedrun.com API wrapper",
+    long_description=readme,
+    long_description_content_type='text/markdown',
     author="null2264",
     author_email="palembani@gmail.com",
     url="https://github.com/null2264/speedrun.py",
