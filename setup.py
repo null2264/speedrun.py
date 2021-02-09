@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 setup(
     name="speedrun.py",
     packages=["speedrunpy"],
-    version="0.0.2",
+    version="0.0.3",
     license="MIT",
     description="Async speedrun.com API wrapper",
     author="null2264",
