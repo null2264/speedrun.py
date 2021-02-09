@@ -28,21 +28,26 @@ import json
 import urllib.parse
 
 
-class Pagination:
-    def __init__(self, data):
+class Page:
+    def __init__(self, data: list, pageData):
         """
         Object for `data.pagination`
         """
-        self.offset = data["offset"]
-        self.max = data["max"]
-        self.size = data["size"]
+        self.data = data
+        self.offset = pageData["offset"]
+        self.max = pageData["max"]
+        self.size = pageData["size"]
         self.hasNextPage = False
-        for i in data["links"]:
-            if i["rel"] == "next":
-                self.hasNextPage = True
+        self.hasPrevPage = False
+        for i in pageData["links"]:
+            self.hasNextPage = i.get("rel", None) == "next"
+            self.hasPrevPage = i.get("rel", None) == "prev"
 
     def __str__(self):
         return "{} -> [size={}, max={}, hasNextPage={}]".format(self.offset, self.size, self.max, self.hasNextPage)
+
+    def __getitem__(self, item):
+         return self.data[item]
 
 
 class Asset:
@@ -63,7 +68,7 @@ class Asset:
 
 
 class Game:
-    def __init__(self, data: dict, pagination: dict, embedded: bool=False, embeds: list=[]):
+    def __init__(self, data: dict, embedded: bool=False, embeds: list=[]):
         """
         Object for `/games/`
         """
@@ -86,7 +91,7 @@ class Game:
         self.platforms = gameData["platforms"]
 
         if not embedded:
-            self.page = Pagination(pagination)
+            # self.page = Pagination(pagination)
             if "levels" in embeds:
                 self.levels = [Level(lev, embedded=True) for lev in gameData["levels"]["data"]]
             if "categories" in embeds:
@@ -104,7 +109,7 @@ class Game:
 
 
 class Run:
-    def __init__(self, data, pagination, embedded: bool=False, embeds: list=[]):
+    def __init__(self, data, embedded: bool=False, embeds: list=[]):
         """
         Object for `/runs/`
         """
@@ -126,7 +131,7 @@ class Run:
         self.players = runData["players"]
 
         if not embedded:
-            self.page = Pagination(pagination)
+            # self.page = Pagination(pagination)
             if "players" in embeds:
                 self.players = [Runner(runner, embedded=True) for runner in self.players["data"]]
 
@@ -270,7 +275,7 @@ class SpeedrunPy:
         }
         query = urllib.parse.urlencode(params)
         games = await self.get("/games", "?{}".format(query))
-        return [Game(game, games["pagination"], embeds=embeds) for game in games["data"]]
+        return Page([Game(game, embeds=embeds) for game in games["data"]], games["pagination"])
 
     async def get_runs(self, name: str = "", **kwargs):
         """
@@ -309,7 +314,7 @@ class SpeedrunPy:
         }
         query = urllib.parse.urlencode(params)
         runs = await self.get("/runs", "?{}".format(query))
-        return [Run(run, runs["pagination"], embeds=embeds) for run in runs["data"]]
+        return Page([Run(run, embeds=embeds) for run in runs["data"]], runs["pagination"])
 
 # Testing stuff
 if __name__ == "__main__":
@@ -317,7 +322,8 @@ if __name__ == "__main__":
     src = SpeedrunPy()
     # res = await src.get_game("Super Mario Sunshine", embeds=["platforms"])
     game = loop.run_until_complete(src.get_games("Super Mario Sunshine", embeds=["levels"]))
-    print(game[0].assets)
+    print(game.hasNextPage)
     print(game[0].levels[0].name)
-    # run = loop.run_until_complete(src.get_runs(embeds=["players"]))
-    # print(run[4].players[0].name)
+    # runs = loop.run_until_complete(src.get_runs(embeds=["players"]))
+    # print(runs.hasNextPage)
+    # print(runs[4].players[0].name)
