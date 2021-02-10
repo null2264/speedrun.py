@@ -28,6 +28,9 @@ import json
 import urllib.parse
 
 
+from fuzzywuzzy import process
+
+
 class Page:
     def __init__(self, data: list, pageData):
         """
@@ -114,16 +117,21 @@ class Run:
         Object for `/runs/`
         """
         self.rawData = data
-        runData = self.rawData
+        runData = self.rawData if data.get("id", None) is not None else self.rawData["run"]
         self.id = runData["id"]
         self.weblink = runData["weblink"]
         self.game = runData["game"]
         self.level = runData["level"]
         self.category = runData["category"]
+
         try:
             self.videos = [vid["uri"] for vid in runData["videos"]["links"]]
         except TypeError:
             self.videos = []
+        except Exception as exc:
+            print(exc)
+            self.video = []
+
         self.comment = runData["comment"]
         self.datePlayed = runData["date"]
 
@@ -132,8 +140,13 @@ class Run:
 
         if not embedded:
             # self.page = Pagination(pagination)
+            if process.extractOne("category", embeds)[1] >= 90:
+                self.category = Category(self.category["data"], embedded=True)
             if "players" in embeds:
                 self.players = [Runner(runner, embedded=True) for runner in self.players["data"]]
+        else:
+            # Obtainable in `/leaderboards/`
+            self.place = self.rawData.get("place", None)
 
     def __str__(self):
         return self.id
@@ -179,10 +192,20 @@ class Platform:
         return self.name
 
 
+class Variable:
+    def __init__(self, data, embedded=False):
+        """
+        Object for `variables`
+        """
+        self.rawData = data
+        varData = self.rawData
+        self.id = varData["id"]
+
+
 class Category:
     def __init__(self, data, embedded=False):
         """
-        Object for category
+        Object for `category`
         """
         self.rawData = data
         categoryData = self.rawData["data"][0] if not embedded else self.rawData
@@ -191,6 +214,14 @@ class Category:
         self.weblink = categoryData["weblink"]
         self.type = categoryData["type"]
         self.rules = categoryData["rules"]
+        self.variables = categoryData.get("variables", None)
+
+        if not embedded:
+            pass
+        else:
+            if self.variables:
+                self.variables = [Variable(var) for var in self.variables["data"]]
+            
     
     def __str__(self):
         return self.name
@@ -209,6 +240,17 @@ class Level:
     
     def __str__(self):
         return self.name
+
+
+class Leaderboard:
+    def __init__(self, data, embedded=False, embeds: dict=[]):
+        """
+        Object for `/leaderboards/`
+        """
+        self.rawData = data
+        lbData = self.rawData["data"]
+        self.runs = lbData["runs"]
+        self.runs = [Run(run, embedded=True) for run in self.runs]
 
 
 class SpeedrunPy:
@@ -232,6 +274,9 @@ class SpeedrunPy:
         """
         async with self.session.get(self.baseUrl + _type + query) as res:
             return json.loads(await res.text())
+
+    def get_embeds(self, query, choices):
+        return [q for q in query if process.extractOne(q, choices)[1] > 85]
 
     async def get_games(self, name: str="", **kwargs):
         """
@@ -268,7 +313,7 @@ class SpeedrunPy:
 
         params = {
             "name": name,
-            "embed": ",".join([e for e in embeds if e in availableEmbeds]),
+            "embed": ",".join(self.get_embeds(embeds, availableEmbeds)),
             "max": perPage,
             "offset": perPage*page,
             **kwargs,
@@ -277,7 +322,7 @@ class SpeedrunPy:
         games = await self.get("/games", "?{}".format(query))
         return Page([Game(game, embeds=embeds) for game in games["data"]], games["pagination"])
 
-    async def get_runs(self, name: str = "", **kwargs):
+    async def get_runs(self, **kwargs):
         """
         Get runs data from speedrun.com api
 
@@ -301,13 +346,14 @@ class SpeedrunPy:
             "platform",
         )
 
+        name = kwargs.pop("name", "")
         embeds = kwargs.pop("embeds", [])
         page = kwargs.pop("page", 0)
         perPage = kwargs.pop("perPage", 100)
 
         params = {
-            "name": name, 
-            "embed": ",".join([e for e in embeds if e in availableEmbeds]), 
+            "game": name, 
+            "embed": ",".join(self.get_embeds(embeds, availableEmbeds)),
             "max": perPage,
             "offset": perPage*page,
             **kwargs
@@ -315,15 +361,38 @@ class SpeedrunPy:
         query = urllib.parse.urlencode(params)
         runs = await self.get("/runs", "?{}".format(query))
         return Page([Run(run, embeds=embeds) for run in runs["data"]], runs["pagination"])
+    
+    async def get_leaderboards(self, game: str, category: str, **kwargs):
+        availableEmbeds = (
+            "game",
+        )
+        level = kwargs.pop("level", None)
+        embeds = kwargs.pop("embeds", [])
+        page = kwargs.pop("page", 0)
+        perPage = kwargs.pop("perPage", 100)
+
+        _type = "/leaderboards/{}/category/{}".format(game, category) if not level else "/leaderboards/{}/level/{/{}".format(game, level, category)
+
+        params = {
+            "embed": ",".join(self.get_embeds(embeds, availableEmbeds)),
+            "max": perPage,
+            "offset": perPage*page,
+            **kwargs
+        }
+        query = urllib.parse.urlencode(params)
+        lb = await self.get(_type, "?{}".format(query))
+        return Leaderboard(lb, embeds=embeds)
+
 
 # Testing stuff
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     src = SpeedrunPy()
     # res = await src.get_game("Super Mario Sunshine", embeds=["platforms"])
-    game = loop.run_until_complete(src.get_games("Super Mario Sunshine", embeds=["levels"]))
-    print(game.hasNextPage)
-    print(game[0].levels[0].name)
-    # runs = loop.run_until_complete(src.get_runs(embeds=["players"]))
-    # print(runs.hasNextPage)
-    # print(runs[4].players[0].name)
+    # games = loop.run_until_complete(src.get_games("Minecraft: Bedrock Edition", embeds=["categories"]))
+    # print(games.hasNextPage)
+    # print(games[0].id)
+    runs = loop.run_until_complete(src.get_runs(embeds=["category.variables"]))
+    print(runs[0].category.variables[0].name)
+    # lb = loop.run_until_complete(src.get_leaderboards(games[0].id, category=games[0].categories[0].id))
+    # print(lb.runs[0].place)
