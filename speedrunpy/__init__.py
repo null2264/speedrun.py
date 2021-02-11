@@ -365,6 +365,12 @@ class SpeedrunPy:
     async def get_leaderboards(self, game: str, category: str, **kwargs):
         availableEmbeds = (
             "game",
+            "category",
+            "level",
+            "players",
+            "regions",
+            "platforms",
+            "variables",
         )
         level = kwargs.pop("level", None)
         embeds = kwargs.pop("embeds", [])
