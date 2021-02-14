@@ -1,6 +1,7 @@
 class Page:
 
-    __slots__ = ("data", "offset", "max", "size", "hasNextPage", "hasPrevPage")
+    __slots__ = ("data", "offset", "max", "size", "hasNextPage",
+                 "hasPrevPage")
 
     def __init__(self, data: list, pageData):
         """
@@ -24,6 +25,9 @@ class Page:
 
     def __getitem__(self, item):
         return self.data[item]
+
+    def __len__(self):
+        return len(self.data)
 
 
 class Asset:
@@ -170,8 +174,10 @@ class Run:
             self.videos = [vid["uri"] for vid in runData["videos"]["links"]]
         except TypeError:
             self.videos = []
+        except KeyError:
+            self.videos = []
         except Exception as exc:
-            print(exc)
+            print("Error", exc)
             self.videos = []
 
         self.comment = runData["comment"]
