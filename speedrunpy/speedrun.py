@@ -176,7 +176,8 @@ class SpeedrunPy:
         )
         category = kwargs.pop("category", None)
         if not category:
-            categories = await self.get_categories(game=game)
+            games = await self.get_games(name=game, embeds=["categories"])
+            categories = games[0].categories
             category = categories[0].id
         level = kwargs.pop("level", None)
         embeds = kwargs.pop("embeds", [])

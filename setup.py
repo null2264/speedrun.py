@@ -11,7 +11,7 @@ with open('README.md') as f:
 setup(
     name="speedrun.py",
     packages=["speedrunpy"],
-    version="0.0.7",
+    version="0.0.8",
     license="MIT",
     description="Async speedrun.com API wrapper",
     long_description=readme,

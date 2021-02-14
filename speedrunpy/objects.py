@@ -348,4 +348,17 @@ class Leaderboard:
         self.rawData = data
         lbData = self.rawData["data"]
         self.runs = lbData["runs"]
-        self.runs = [Run(run, embedded=True) for run in self.runs]
+        self.runs = [Run(run, embedded=True, embeds=["players"]) for run in self.runs]
+        self.game = lbData["game"]
+
+        if not embedded:
+            for embed in embeds:
+                spl = embed.split(".")
+                if spl[0] == "game":
+                    try:
+                        _ = [spl[1]]
+                    except IndexError:
+                        _ = []
+                    self.game = Game(
+                        self.game["data"], embedded=True, embeds=_
+                    )
