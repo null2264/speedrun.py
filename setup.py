@@ -1,9 +1,5 @@
 from setuptools import setup
 
-requirements = []
-with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
-
 readme=""
 with open('README.md') as f:
     readme = f.read()
@@ -11,7 +7,7 @@ with open('README.md') as f:
 setup(
     name="speedrun.py",
     packages=["speedrunpy"],
-    version="0.0.9",
+    version="0.0.10",
     license="MIT",
     description="Async API Wrapper for speedrun.com",
     long_description=readme,
