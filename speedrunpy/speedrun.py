@@ -184,7 +184,7 @@ class SpeedrunPy:
         page = kwargs.pop("page", 0)
         perPage = kwargs.pop("perPage", 100)
 
-        _type = "/leaderboards/{}/category/{}".format(game, category) if not level else "/leaderboards/{}/level/{/{}".format(game, level, category)
+        _type = "/leaderboards/{}/category/{}".format(game, category) if not level else "/leaderboards/{}/level/{}/{}".format(game, level, category)
 
         params = {
             "embed": ",".join(self.get_embeds(embeds, availableEmbeds)),
