@@ -23,27 +23,29 @@ SOFTWARE.
 """
 
 
-from aiohttp import ClientSession
 from typing import Optional
+
+
+from .http import HTTPClient
 
 
 __all__ = "Asset"
 
 
-async def get_from_url(url, session: ClientSession) -> Optional[bytes]:
-    async with session.get(url) as res:
+async def get_from_url(url, http: HTTPClient) -> Optional[bytes]:
+    async with http._session.get(url) as res:
         return await res.read()
 
 
 class Asset:
-    __slots__ = ("url", "_session")
+    __slots__ = ("url", "_http")
 
-    def __init__(self, payload: dict, session: ClientSession) -> None:
+    def __init__(self, payload: dict, http) -> None:
         self.url = payload["uri"]
-        self._session = session
+        self._http = http
 
     def __repr__(self) -> str:
         return "<Asset url={}>".format(self.url)
 
     async def read(self):
-        return await get_from_url(self.url, self._session)
+        return await get_from_url(self.url, self._http)

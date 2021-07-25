@@ -25,16 +25,16 @@ SOFTWARE.
 
 import datetime
 from typing import Union, Dict
-from aiohttp import ClientSession
 
 
 from .asset import Asset
+from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
 
 
 class Game(SRCObjectMixin):
-    def __init__(self, payload: dict, session: ClientSession) -> None:
+    def __init__(self, payload: dict, http: HTTPClient) -> None:
         super().__init__(payload)
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
@@ -54,8 +54,8 @@ class Game(SRCObjectMixin):
         self.moderators: list = payload["moderators"]
         self._created: str = payload["created"]
         self.assets: Dict[str, Asset] = {
-            k: Asset(v, session) for k, v in payload["assets"].items()
-        }  # TODO: Create asset object
+            k: Asset(v, http) for k, v in payload["assets"].items()
+        }
 
     def __repr__(self) -> str:
         return "<Games id={0.id} names={0.names}>".format(self)

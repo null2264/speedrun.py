@@ -27,15 +27,14 @@ import json
 
 
 from aiohttp import ClientSession
+from typing import Optional, Iterable
 
 
 from .errors import RateLimited
 from .game import Game
+from .http import HTTPClient
 from .page import Page
 from .utils import urlify
-
-
-from typing import Optional, Iterable
 
 
 class SpeedrunPy:
@@ -43,35 +42,11 @@ class SpeedrunPy:
         """
         Wrapper for speedrun.com's API
         """
-        self._session: ClientSession = session
-        self.base_url = "https://www.speedrun.com/api/v1"
-        self.user_agent = "speedrun.py/0.0.1"
+        user_agent = "speedrun.py/0.0.1"
+        self._http: HTTPClient = HTTPClient(session=session, user_agent=user_agent)
 
     async def close(self):
-        await self._session.close()
-
-    async def _generate_session(self):
-        """|coro|
-
-        Must be a coroutine to avoid the deprecation warning of Python 3.9+.
-        """
-        return ClientSession(headers={"User-Agent": self.user_agent})
-
-    async def _request(self, query: str, *, endpoint: str, method: str = "get") -> dict:
-        """|coro|
-
-        Request data from speedrun.com api
-        """
-        # TODO: Move all request into `http.py`
-        if self._session is None:
-            self._session = await self._generate_session()
-
-        action = getattr(self._session, method.lower(), self._session.get)
-        async with action(self.base_url + endpoint + query) as res:
-            if res.status == 420:
-                raise RateLimited from None
-            data = await res.json()
-            return data
+        await self._http.close()
 
     async def get_games(
         self,
@@ -117,11 +92,11 @@ class SpeedrunPy:
         }
         query = urlify(**params)
 
-        data = await self._request(query, endpoint="/games")
+        data = await self._http._request(query, endpoint="/games")
 
         return Page(
             page_info=data["pagination"],
             data=data["data"],
             cls=Game,
-            session=self._session,
+            http=self._http,
         )
