@@ -38,7 +38,9 @@ from .utils import urlify
 
 
 class SpeedrunPy:
-    def __init__(self, session: Optional[ClientSession] = None, user_agent: Optional[str] = None) -> None:
+    def __init__(
+        self, session: Optional[ClientSession] = None, user_agent: Optional[str] = None
+    ) -> None:
         """
         Wrapper for speedrun.com's API
         """
@@ -93,10 +95,9 @@ class SpeedrunPy:
         query = urlify(**params)
 
         data = await self._http._request(query, endpoint="/games")
+        games = [Game(i, http=self._http) for i in data["data"]]
 
         return Page(
             page_info=data["pagination"],
-            data=data["data"],
-            cls=Game,
-            http=self._http,
+            data=games,
         )
