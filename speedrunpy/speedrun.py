@@ -38,14 +38,14 @@ from .utils import urlify
 
 
 class SpeedrunPy:
-    def __init__(self, session: Optional[ClientSession] = None) -> None:
+    def __init__(self, session: Optional[ClientSession] = None, user_agent: Optional[str] = None) -> None:
         """
         Wrapper for speedrun.com's API
         """
-        user_agent = "speedrun.py/0.0.1"
+        user_agent = user_agent or "speedrun.py/0.0.1"
         self._http: HTTPClient = HTTPClient(session=session, user_agent=user_agent)
 
-    async def close(self):
+    async def close(self) -> None:
         await self._http.close()
 
     async def get_games(
