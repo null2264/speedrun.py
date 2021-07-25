@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "speedrun.py"
+version = "0.0.1"
+description = "An asynchronous API wrapper for speedrun.com"
+authors = ["null2264"]
+
+license = "MIT"
+readme = "README.md"
+
+packages = [
+    { include = "speedrunpy" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+aiohttp = "^3.6.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
