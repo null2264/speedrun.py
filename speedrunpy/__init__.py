@@ -1,7 +1,7 @@
 """
 MIT License
 
-Copyright (c) 2021 null2264
+Copyright (c) 2021-Present null2264
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -50,4 +50,6 @@ class VersionInfo(NamedTuple):
     serial: int
 
 
-version_info: VersionInfo = VersionInfo(major=0, minor=0, micro=1, releaselevel="final", serial=0)
+version_info: VersionInfo = VersionInfo(
+    major=0, minor=0, micro=1, releaselevel="final", serial=0
+)
