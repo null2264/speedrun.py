@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 
-def urlify(**kwargs):
+def urlify(**kwargs) -> str:
     return "?" + "&".join(
         [
             f"{k}={str(v).replace(' ', '%20')}"
@@ -31,3 +31,7 @@ def urlify(**kwargs):
             if v is not None
         ]
     )
+
+
+def zulu_to_utc(iso_datetime: str) -> str:
+    return iso_datetime.rstrip("Z") + "+00:00"

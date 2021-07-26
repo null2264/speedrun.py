@@ -12,6 +12,7 @@ An asynchronous API wrapper for speedrun.com
 - [ ] Notifications
 - [ ] Platforms
 - [ ] Profile
+- [ ] Publishers
 - [ ] Regions
 - [ ] Runs
 - [ ] Series

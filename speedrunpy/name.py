@@ -27,10 +27,12 @@ from typing import Optional
 
 
 class Name:
+    __slots__ = ("international", "japanese", "twitch")
+
     def __init__(self, payload: dict) -> None:
-        self.international: Optional[str] = payload["international"]
-        self.japanese: Optional[str] = payload["japanese"]
-        self.twitch: Optional[str] = payload["twitch"]
+        self.international: Optional[str] = payload.get("international")
+        self.japanese: Optional[str] = payload.get("japanese")
+        self.twitch: Optional[str] = payload.get("twitch")
 
     def __str__(self) -> str:
         return self.international or self.twitch or self.japanese

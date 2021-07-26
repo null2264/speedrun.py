@@ -99,7 +99,7 @@ class HTTPClient:
         offset: Optional[int],
         max: Optional[int],
         embeds: Optional[Iterable],
-    ) -> Response[dict]:
+    ) -> Response:
         query = {}
 
         if name:
@@ -148,8 +148,54 @@ class HTTPClient:
             query["max"] = max
 
         if embeds:
-            query["embeds"] = ",".join(embeds)
+            query["embed"] = ",".join(embeds)
 
         route = Route("GET", "/games", **query)
+
+        return self.request(route)
+
+    def _users(
+        self,
+        *,
+        lookup: Optional[str],
+        name: Optional[str],
+        twitch: Optional[str],
+        hitbox: Optional[str],
+        twitter: Optional[str],
+        speedrunslive: Optional[str],
+        offset: Optional[int],
+        max: Optional[int],
+        embeds: Optional[Iterable],
+    ) -> Response:
+        query = {}
+
+        if lookup:
+            query["lookup"] = lookup
+
+        if name:
+            query["name"] = name
+
+        if twitch:
+            query["twitch"] = twitch
+
+        if hitbox:
+            query["hitbox"] = hitbox
+
+        if twitter:
+            query["twitter"] = twitter
+
+        if speedrunslive:
+            query["speedrunslive"] = speedrunslive
+
+        if offset:
+            query["offset"] = offset
+
+        if max:
+            query["max"] = max
+
+        if embeds:
+            query["embed"] = ",".join(embeds)
+
+        route = Route("GET", "/users", **query)
 
         return self.request(route)

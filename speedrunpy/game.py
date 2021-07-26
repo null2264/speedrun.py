@@ -32,6 +32,8 @@ from .asset import Asset
 from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
+from .user import User
+from .utils import zulu_to_utc
 
 
 class Game(SRCObjectMixin):
@@ -59,6 +61,12 @@ class Game(SRCObjectMixin):
         self.assets: Dict[str, Asset] = {
             k: Asset(v, http) for k, v in payload["assets"].items()
         }
+        self._embeds: Optional[Iterable] = embeds
+
+        for e in self._embeds:
+            spl = e.split(".")
+            if spl[0] == "moderators":
+                self.moderators: Iterable[User] = [User(i) for i in self.moderators["data"]]
 
     def __str__(self) -> str:
         return self.name.international
@@ -78,5 +86,5 @@ class Game(SRCObjectMixin):
 
     @property
     def created(self) -> datetime.datetime:
-        created = self._created.rstrip("Z") + "+00:00"
+        created = zulu_to_utc(self._created)
         return datetime.datetime.fromisoformat(created)

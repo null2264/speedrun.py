@@ -34,6 +34,7 @@ from .errors import RateLimited
 from .game import Game
 from .http import HTTPClient
 from .page import Page
+from .user import User
 from .utils import urlify
 
 
@@ -93,9 +94,38 @@ class SpeedrunPy:
             embeds=embeds,
         )
 
-        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
+        games: List[Game] = [Game(i, http=self._http, embeds=embeds) for i in data["data"]]
 
         return Page(
             page_info=data["pagination"],
             data=games,
         )
+
+    async def get_users(
+        self,
+        *,
+        lookup: Optional[str] = None,
+        name: Optional[str] = None,
+        twitch: Optional[str] = None,
+        hitbox: Optional[str] = None,
+        twitter: Optional[str] = None,
+        speedrunslive: Optional[str] = None,
+        offset: Optional[int] = None,
+        max: Optional[int] = None,
+        embeds: Optional[Iterable] = None,
+    ) -> Page:
+        data = await self._http._users(
+            lookup=lookup,
+            name=name,
+            twitch=twitch,
+            hitbox=hitbox,
+            twitter=twitter,
+            speedrunslive=speedrunslive,
+            offset=offset,
+            max=max,
+            embeds=embeds,
+        )
+
+        users = [User(i) for i in data["data"]]
+
+        return Page(page_info=data["pagination"], data=users)
