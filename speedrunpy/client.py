@@ -38,7 +38,7 @@ from .user import User
 from .utils import urlify
 
 
-class SpeedrunPy:
+class Client:
     def __init__(
         self, session: Optional[ClientSession] = None, user_agent: Optional[str] = None
     ) -> None:

@@ -35,11 +35,12 @@ from typing import Literal, NamedTuple
 
 from . import utils as utils
 from .asset import Asset as Asset
+from .client import Client as Client
 from .errors import *
 from .game import Game as Game
 from .name import Name as Name
 from .page import Page as Page
-from .speedrun import SpeedrunPy as Client
+from .user import User as User
 
 
 class VersionInfo(NamedTuple):
