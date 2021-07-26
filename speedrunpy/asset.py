@@ -45,7 +45,7 @@ class Asset:
         self._http = http
 
     def __repr__(self) -> str:
-        return "<Asset url={}>".format(self.url)
+        return f"<Asset url={self.url}>"
 
     async def read(self):
         return await get_from_url(self.url, self._http)

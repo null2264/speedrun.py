@@ -21,10 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
 
 
 import datetime
-from typing import Union, Dict, Optional, Iterable
+from typing import Union, Dict, Optional, Iterable, Any
 
 
 from .asset import Asset
@@ -34,7 +35,9 @@ from .name import Name
 
 
 class Game(SRCObjectMixin):
-    def __init__(self, payload: dict, http: HTTPClient, embeds: Optional[Iterable] = None) -> None:
+    def __init__(
+        self, payload: dict, http: HTTPClient, embeds: Optional[Iterable] = None
+    ) -> None:
         super().__init__(payload)
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
@@ -57,11 +60,14 @@ class Game(SRCObjectMixin):
             k: Asset(v, http) for k, v in payload["assets"].items()
         }
 
-    def __repr__(self) -> str:
-        return "<Games id={0.id} names={0.names}>".format(self)
-
     def __str__(self) -> str:
         return self.name.international
+
+    def __repr__(self) -> str:
+        return f"<Games id={self.id} names={self.name}>"
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, Game) and self.id == other.id
 
     @property
     def release_date(self) -> datetime.datetime:

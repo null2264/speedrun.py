@@ -24,15 +24,7 @@ SOFTWARE.
 
 
 from aiohttp import ClientSession
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-    ClassVar,
-    Coroutine,
-    TypeVar,
-    Iterable,
-    Any
-)
+from typing import TYPE_CHECKING, Optional, ClassVar, Coroutine, TypeVar, Iterable, Any
 
 
 from .utils import urlify

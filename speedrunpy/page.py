@@ -38,3 +38,9 @@ class Page:
         self.size: int = page_info["size"]
         self.links: list = page_info["links"]
         self.data: List[Any] = data
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__} offset={self.offset} "
+            f"max={self.max} size={self.size} data={self.data!r}>"
+        )

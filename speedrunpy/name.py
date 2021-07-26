@@ -32,10 +32,10 @@ class Name:
         self.japanese: Optional[str] = payload["japanese"]
         self.twitch: Optional[str] = payload["twitch"]
 
+    def __str__(self) -> str:
+        return self.international or self.twitch or self.japanese
+
     def __repr__(self) -> str:
         return "<Names international={0.international} japanese={0.japanese} twitch={0.twitch}>".format(
             self
         )
-
-    def __str__(self) -> str:
-        return self.international or self.twitch or self.japanese
