@@ -60,27 +60,38 @@ class Game(SRCObjectMixin):
 
     def __init__(self, payload: dict, http: HTTPClient) -> None:
         super().__init__(payload)
-        # TODO: Support _bulk mode
+
+        # Dataset given in _bulk mode
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
         self.abbreviation: str = payload["abbreviation"]
         self.weblink: str = payload["weblink"]
-        self.released: int = payload["released"]
-        self._release_date: str = payload["release-date"]
-        self.ruleset: Dict[str, Union[bool, dict]] = payload["ruleset"]
-        self.romhack: bool = payload["romhack"]
-        self.gametypes: list = payload["gametypes"]
-        self.platforms: list = payload["platforms"]
-        self.regions: list = payload["regions"]
-        self.genres: list = payload["genres"]
-        self.engines: list = payload["engines"]
-        self.developers: list = payload["developers"]
-        self.publishers: list = payload["publishers"]
-        self.moderators: List[User] = [User(i) for i in payload["moderators"]["data"]]
-        self._created: str = payload["created"]
-        self.assets: Dict[str, Asset] = {
-            k: Asset(v, http=http) for k, v in payload["assets"].items()
-        }
+
+        self.released: Optional[int] = payload.get("released")
+        self._release_date: Optional[str] = payload.get("release-date")
+        self.ruleset: Optional[Dict[str, Union[bool, dict]]] = payload.get("ruleset")
+        self.romhack: Optional[bool] = payload.get("romhack")
+        self.gametypes: Optional[list] = payload.get("gametypes")
+        self.platforms: Optional[list] = payload.get("platforms")
+        self.regions: Optional[list] = payload.get("regions")
+        self.genres: Optional[list] = payload.get("genres")
+        self.engines: Optional[list] = payload.get("engines")
+        self.developers: Optional[list] = payload.get("developers")
+        self.publishers: Optional[list] = payload.get("publishers")
+
+        moderators: Optional[dict] = payload.get("moderators", dict()).get("data")
+        self.moderators: Optional[List[User]] = None
+        if moderators:
+            self.moderators = [User(i) for i in moderators]
+
+        self._created: Optional[str] = payload.get("created")
+
+        assets: Optional[dict] = payload.get("assets")
+        self.assets: Optional[Dict[str, Asset]] = None
+        if assets:
+            self.assets = {
+                k: Asset(v, http=http) for k, v in payload["assets"].items()
+            }
 
     def __str__(self) -> Optional[str]:
         return self.name.international
@@ -95,10 +106,12 @@ class Game(SRCObjectMixin):
         return not self.__eq__(other)
 
     @property
-    def release_date(self) -> datetime.datetime:
-        return datetime.datetime.fromisoformat(self._release_date)
+    def release_date(self) -> Optional[datetime.datetime]:
+        if self._release_date:
+            return datetime.datetime.fromisoformat(self._release_date)
 
     @property
-    def created(self) -> datetime.datetime:
-        created = zulu_to_utc(self._created)
-        return datetime.datetime.fromisoformat(created)
+    def created(self) -> Optional[datetime.datetime]:
+        if self._created:
+            created = zulu_to_utc(self._created)
+            return datetime.datetime.fromisoformat(created)
