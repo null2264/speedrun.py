@@ -23,8 +23,20 @@ SOFTWARE.
 """
 
 
-from aiohttp import ClientSession
-from typing import TYPE_CHECKING, Optional, ClassVar, Coroutine, TypeVar, Iterable, Any
+import json
+from typing import (
+    Optional,
+    ClassVar,
+    Coroutine,
+    TypeVar,
+    Iterable,
+    Any,
+    Union,
+    Dict,
+)
+
+
+from aiohttp import ClientSession, ClientResponse
 
 
 from .utils import urlify
@@ -32,6 +44,17 @@ from .utils import urlify
 
 T = TypeVar("T")
 Response = Coroutine[Any, Any, T]
+
+
+async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
+    text = await response.text(encoding="utf-8")
+    try:
+        if response.headers["content-type"] == "application/json":
+            return json.loads(text)
+    except KeyError:
+        pass
+
+    return text
 
 
 class Route:
@@ -72,7 +95,7 @@ class HTTPClient:
             self._session = await self._generate_session()
 
         async with self._session.request(route.method, route.url, **kwargs) as response:
-            data = await response.json()
+            data = await json_or_text(response)
 
             if 300 > response.status >= 200:
                 return data
