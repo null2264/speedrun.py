@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 
+import asyncio
 import json
 from typing import (
     Optional,
@@ -90,18 +91,26 @@ class HTTPClient:
 
         Request data from speedrun.com api
         """
-        # TODO: Move all request into `http.py`
         if self._session is None:
             self._session = await self._generate_session()
 
-        async with self._session.request(route.method, route.url, **kwargs) as response:
-            data = await json_or_text(response)
+        for tries in range(5):
+            async with self._session.request(route.method, route.url, **kwargs) as response:
+                data = await json_or_text(response)
 
-            if 300 > response.status >= 200:
-                return data
+                if 300 > response.status >= 200:
+                    return data
 
-            if response.status == 420:
-                raise RateLimited from None
+                retry_after: float = 60.00
+
+                if response.status == 420:
+                    # Handles ratelimited
+                    print("Rate limited, retrying in {} seconds".format(retry_after))
+                    await asyncio.sleep(retry_after)
+                    continue
+
+        # ran out of tries
+        raise RuntimeError from None
 
     def _games(
         self,
