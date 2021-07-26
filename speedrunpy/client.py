@@ -40,7 +40,10 @@ from .utils import urlify
 
 class Client:
     def __init__(
-        self, session: Optional[ClientSession] = None, user_agent: Optional[str] = None
+        self,
+        session: Optional[ClientSession] = None,
+        user_agent: Optional[str] = None,
+        token: Optional[str] = None,
     ) -> None:
         """
         Wrapper for speedrun.com's API
@@ -94,7 +97,9 @@ class Client:
             embeds=embeds,
         )
 
-        games: List[Game] = [Game(i, http=self._http, embeds=embeds) for i in data["data"]]
+        games: List[Game] = [
+            Game(i, http=self._http, embeds=embeds) for i in data["data"]
+        ]
 
         return Page(
             page_info=data["pagination"],
