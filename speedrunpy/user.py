@@ -27,6 +27,8 @@ import datetime
 from typing import Iterable, Optional, List, Dict
 
 
+from .asset import Asset
+from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
 from .utils import zulu_to_utc
@@ -46,7 +48,9 @@ class User(SRCObjectMixin):
         self.hitbox: Optional[str] = (payload["hitbox"] or {}).get("uri", None)
         self.youtube: Optional[str] = (payload["youtube"] or {}).get("uri", None)
         self.twitter: Optional[str] = (payload["twitter"] or {}).get("uri", None)
-        self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get("uri", None)
+        self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get(
+            "uri", None
+        )
 
     def __str__(self) -> str:
         return self.name.international

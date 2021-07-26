@@ -41,6 +41,7 @@ from aiohttp import ClientSession, ClientResponse
 
 
 from .utils import urlify
+from .errors import HTTPException
 
 
 T = TypeVar("T")
@@ -112,7 +113,7 @@ class HTTPClient:
                     continue
 
         # ran out of tries
-        raise RuntimeError from None
+        raise HTTPException from None
 
     def _games(
         self,

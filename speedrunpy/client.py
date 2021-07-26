@@ -30,7 +30,6 @@ from aiohttp import ClientSession
 from typing import Optional, Iterable, List
 
 
-from .errors import RateLimited
 from .game import Game
 from .http import HTTPClient
 from .page import Page
@@ -72,6 +71,7 @@ class Client:
         _bulk: Optional[str] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
+        error_on_empty: Optional[bool] = False,
     ) -> Page:
         """|coro|
 
@@ -99,6 +99,9 @@ class Client:
             Game(i, http=self._http) for i in data["data"]
         ]
 
+        if error_on_empty and not games:
+            raise RuntimeError
+
         return Page(
             page_info=data["pagination"],
             data=games,
@@ -115,6 +118,7 @@ class Client:
         speedrunslive: Optional[str] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
+        error_on_empty: Optional[bool] = False,
     ) -> Page:
         data = await self._http._users(
             lookup=lookup,
@@ -128,5 +132,8 @@ class Client:
         )
 
         users = [User(i) for i in data["data"]]
+
+        if error_on_empty and not users:
+            raise RuntimeError("No data found")
 
         return Page(page_info=data["pagination"], data=users)

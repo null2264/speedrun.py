@@ -79,7 +79,7 @@ class Game(SRCObjectMixin):
         self.moderators: List[User] = [User(i) for i in payload["moderators"]["data"]]
         self._created: str = payload["created"]
         self.assets: Dict[str, Asset] = {
-            k: Asset(v, http) for k, v in payload["assets"].items()
+            k: Asset(v, http=http) for k, v in payload["assets"].items()
         }
 
     def __str__(self) -> str:

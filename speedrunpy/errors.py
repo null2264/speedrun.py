@@ -23,6 +23,6 @@ SOFTWARE.
 """
 
 
-class RateLimited(Exception):
+class HTTPException(Exception):
     def __init__(self):
-        super().__init__("You're being rate limited")
+        super().__init__("Failed to get data from speedrun.com")

@@ -23,14 +23,26 @@ SOFTWARE.
 """
 
 
-from typing import Any, List
+from typing import Any, List, overload
 
 
+from .game import Game
 from .http import HTTPClient
+from .user import User
 
 
 class Page:
     __slots__ = ("offset", "max", "size", "links", "data")
+
+    @overload
+    def __init__(self, page_info: ..., data: ...) -> None:
+        self.data: List[Game] = ...
+        ...
+
+    @overload
+    def __init__(self, page_info: ..., data: ...) -> None:
+        self.data: List[User] = ...
+        ...
 
     def __init__(self, page_info: dict, data: List[dict]) -> None:
         self.offset: int = page_info["offset"]

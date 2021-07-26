@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 
-from typing import Optional
+from typing import Optional, Union
 
 
 from .http import HTTPClient
@@ -40,9 +40,9 @@ async def get_from_url(url, http: HTTPClient) -> Optional[bytes]:
 class Asset:
     __slots__ = ("url", "_http")
 
-    def __init__(self, payload: dict, http) -> None:
-        self.url = payload["uri"]
-        self._http = http
+    def __init__(self, payload: Union[dict, str], http: HTTPClient) -> None:
+        self.url: str = payload["uri"]
+        self._http: HTTPClient = http
 
     def __repr__(self) -> str:
         return f"<Asset url={self.url}>"
