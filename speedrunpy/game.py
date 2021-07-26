@@ -31,6 +31,7 @@ from typing import Union, Dict, Optional, Iterable, Any, List
 from .asset import Asset
 from .category import Category
 from .http import HTTPClient
+from .level import Level
 from .mixin import SRCObjectMixin
 from .name import Name
 from .user import User
@@ -57,6 +58,8 @@ class Game(SRCObjectMixin):
         "moderators",
         "_created",
         "assets",
+        "levels",
+        "categories",
     )
 
     def __init__(self, payload: dict, http: HTTPClient) -> None:
@@ -70,7 +73,7 @@ class Game(SRCObjectMixin):
 
         self.released: Optional[int] = payload.get("released")
         self._release_date: Optional[str] = payload.get("release-date")
-        self.ruleset: Optional[Dict[str, Union[bool, dict]]] = payload.get("ruleset")
+        self.ruleset: Optional[Dict[str, Union[bool, Dict]]] = payload.get("ruleset")
         self.romhack: Optional[bool] = payload.get("romhack")
         self.gametypes: Optional[list] = payload.get("gametypes")
         self.platforms: Optional[list] = payload.get("platforms")
@@ -80,21 +83,24 @@ class Game(SRCObjectMixin):
         self.developers: Optional[list] = payload.get("developers")
         self.publishers: Optional[list] = payload.get("publishers")
 
-        moderators: Optional[dict] = payload.get("moderators", dict()).get("data")
+        moderators: Optional[Dict] = payload.get("moderators", dict()).get("data")
         self.moderators: Optional[List[User]] = None
         if moderators:
             self.moderators = [User(i) for i in moderators]
 
         self._created: Optional[str] = payload.get("created")
 
-        assets: Optional[dict] = payload.get("assets")
+        assets: Optional[Dict] = payload.get("assets")
         self.assets: Optional[Dict[str, Asset]] = None
         if assets:
-            self.assets = {
-                k: Asset(v, http=http) for k, v in payload["assets"].items()
-            }
+            self.assets = {k: Asset(v, http=http) for k, v in payload["assets"].items()}
 
-        categories: Optional[dict] = payload.get("categories")
+        levels: Optional[Dict] = payload.get("levels")
+        self.levels: Optional[List[Level]] = None
+        if levels:
+            self.levels = [Level(i) for i in levels["data"]]
+
+        categories: Optional[Dict] = payload.get("categories")
         self.categories: Optional[List[Category]] = None
         if categories:
             self.categories = [Category(i) for i in categories["data"]]

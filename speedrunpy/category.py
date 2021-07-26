@@ -30,6 +30,8 @@ from .mixin import SRCObjectMixin
 
 
 class Category(SRCObjectMixin):
+    __slots__ = ("id", "name", "weblink", "type", "rules", "players", "misc")
+
     def __init__(self, payload: dict) -> None:
         self.id: str = payload["id"]
         self.name: str = payload["name"]

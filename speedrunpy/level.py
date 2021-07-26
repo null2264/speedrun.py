@@ -23,11 +23,32 @@ SOFTWARE.
 """
 
 
-from typing import List, Optional
+from typing import Dict, Any, Optional, List
 
 
-class SRCObjectMixin:
-    __slots__ = ("links",)
+from .category import Category
+from .mixin import SRCObjectMixin
+
+
+class Level(SRCObjectMixin):
+    __slots__ = ("id", "name", "weblink", "rules", "categories")
 
     def __init__(self, payload: dict) -> None:
-        self.links: Optional[List[dict]] = payload.get("links")
+        self.id: str = payload["id"]
+        self.name: str = payload["name"]
+        self.weblink: str = payload["weblink"]
+        self.rules: str = payload["rules"]
+
+        categories: Optional[Dict] = payload.get("categories")
+        self.categories: Optional[List[Category]] = None
+        if categories:
+            self.categories = [Category(i) for i in categories["data"]]
+
+    def __str__(self) -> str:
+        return self.name
+
+    def __repr__(self) -> str:
+        return (
+            f"<{self.__class__.__name__} id={self.id} name={self.name} "
+            f"categories={self.categories}>"
+        )
