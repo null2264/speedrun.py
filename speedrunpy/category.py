@@ -23,27 +23,27 @@ SOFTWARE.
 """
 
 
-from typing import Optional
+from typing import Dict, Any
 
 
-from .http import HTTPClient
+from .mixin import SRCObjectMixin
 
 
-__all__ = ("Asset",)
+class Category(SRCObjectMixin):
+    def __init__(self, payload: dict) -> None:
+        self.id: str = payload["id"]
+        self.name: str = payload["name"]
+        self.weblink: str = payload["weblink"]
+        self.type: str = payload["type"]
+        self.rules: str = payload["rules"]
+        self.players: Dict[str, Any] = payload["players"]
+        self.misc: bool = payload["miscellaneous"]
 
-
-class Asset:
-    """A class representing an Asset"""
-
-    __slots__ = ("url", "_http")
-
-    def __init__(self, payload: dict, http: HTTPClient) -> None:
-        self.url: str = payload["uri"]
-        self._http: HTTPClient = http
+    def __str__(self) -> str:
+        return self.name
 
     def __repr__(self) -> str:
-        return f"<Asset url={self.url}>"
-
-    async def read(self) -> Optional[bytes]:
-        """Get asset's bytes from url"""
-        return await self._http.get_from_url(self.url)
+        return (
+            f"<{self.__class__.__name__} id={self.id} "
+            f"name={self.name} type={self.type}>"
+        )

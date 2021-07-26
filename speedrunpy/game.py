@@ -29,6 +29,7 @@ from typing import Union, Dict, Optional, Iterable, Any, List
 
 
 from .asset import Asset
+from .category import Category
 from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
@@ -93,11 +94,16 @@ class Game(SRCObjectMixin):
                 k: Asset(v, http=http) for k, v in payload["assets"].items()
             }
 
+        categories: Optional[dict] = payload.get("categories")
+        self.categories: Optional[List[Category]] = None
+        if categories:
+            self.categories = [Category(i) for i in categories["data"]]
+
     def __str__(self) -> Optional[str]:
         return self.name.international
 
     def __repr__(self) -> str:
-        return f"<Games id={self.id} names={self.name}>"
+        return f"<{self.__class__.__name__} id={self.id} name={self.name}>"
 
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Game) and self.id == other.id
