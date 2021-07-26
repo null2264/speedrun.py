@@ -27,12 +27,13 @@ import datetime
 from typing import Iterable, Optional, List, Dict
 
 
+from .mixin import SRCObjectMixin
 from .name import Name
 from .utils import zulu_to_utc
 
 
-class User:
-    def __init__(self, payload: dict, embeds: Optional[Iterable] = None) -> None:
+class User(SRCObjectMixin):
+    def __init__(self, payload: dict) -> None:
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
         self.pronouns: Optional[str] = payload["pronouns"]
@@ -46,7 +47,6 @@ class User:
         self.youtube: Optional[str] = (payload["youtube"] or {}).get("uri", None)
         self.twitter: Optional[str] = (payload["twitter"] or {}).get("uri", None)
         self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get("uri", None)
-        self.links: List[Dict[str, str]] = payload["links"]
 
     def __str__(self) -> str:
         return self.name.international

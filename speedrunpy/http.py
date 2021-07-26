@@ -95,7 +95,9 @@ class HTTPClient:
             self._session = await self._generate_session()
 
         for tries in range(5):
-            async with self._session.request(route.method, route.url, **kwargs) as response:
+            async with self._session.request(
+                route.method, route.url, **kwargs
+            ) as response:
                 data = await json_or_text(response)
 
                 if 300 > response.status >= 200:
@@ -130,7 +132,6 @@ class HTTPClient:
         _bulk: Optional[str],
         offset: Optional[int],
         max: Optional[int],
-        embeds: Optional[Iterable],
     ) -> Response:
         query = {}
 
@@ -170,8 +171,8 @@ class HTTPClient:
         if romhack:
             query["romhack"] = romhack
 
-        if _bulk:
-            query["_bulk"] = _bulk
+        # if _bulk:
+        #     query["_bulk"] = _bulk
 
         if offset:
             query["offset"] = offset
@@ -179,8 +180,22 @@ class HTTPClient:
         if max:
             query["max"] = max
 
-        if embeds:
-            query["embed"] = ",".join(embeds)
+        query["embed"] = ",".join(
+            (
+                "levels.variables",
+                "levels.categories.variables",
+                "categories.variables",
+                "moderators",
+                "gametypes",
+                "platforms",
+                "regions",
+                "genres",
+                "engines",
+                "developers",
+                "publishers",
+                "variables",
+            )
+        )
 
         route = Route("GET", "/games", **query)
 
@@ -197,7 +212,6 @@ class HTTPClient:
         speedrunslive: Optional[str],
         offset: Optional[int],
         max: Optional[int],
-        embeds: Optional[Iterable],
     ) -> Response:
         query = {}
 
@@ -224,9 +238,6 @@ class HTTPClient:
 
         if max:
             query["max"] = max
-
-        if embeds:
-            query["embed"] = ",".join(embeds)
 
         route = Route("GET", "/users", **query)
 

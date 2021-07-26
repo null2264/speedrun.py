@@ -72,7 +72,6 @@ class Client:
         _bulk: Optional[str] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
-        embeds: Optional[Iterable] = None,
     ) -> Page:
         """|coro|
 
@@ -94,11 +93,10 @@ class Client:
             _bulk=_bulk,
             offset=offset,
             max=max,
-            embeds=embeds,
         )
 
         games: List[Game] = [
-            Game(i, http=self._http, embeds=embeds) for i in data["data"]
+            Game(i, http=self._http) for i in data["data"]
         ]
 
         return Page(
@@ -117,7 +115,6 @@ class Client:
         speedrunslive: Optional[str] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
-        embeds: Optional[Iterable] = None,
     ) -> Page:
         data = await self._http._users(
             lookup=lookup,
@@ -128,7 +125,6 @@ class Client:
             speedrunslive=speedrunslive,
             offset=offset,
             max=max,
-            embeds=embeds,
         )
 
         users = [User(i) for i in data["data"]]

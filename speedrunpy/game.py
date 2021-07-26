@@ -25,7 +25,7 @@ from __future__ import annotations
 
 
 import datetime
-from typing import Union, Dict, Optional, Iterable, Any
+from typing import Union, Dict, Optional, Iterable, Any, List
 
 
 from .asset import Asset
@@ -37,10 +37,30 @@ from .utils import zulu_to_utc
 
 
 class Game(SRCObjectMixin):
-    def __init__(
-        self, payload: dict, http: HTTPClient, embeds: Optional[Iterable] = None
-    ) -> None:
+    __slots__ = (
+        "id",
+        "name",
+        "abbreviation",
+        "weblink",
+        "released",
+        "_release_date",
+        "ruleset",
+        "romhack",
+        "gametypes",
+        "platforms",
+        "regions",
+        "genres",
+        "engines",
+        "developers",
+        "publishers",
+        "moderators",
+        "_created",
+        "assets",
+    )
+
+    def __init__(self, payload: dict, http: HTTPClient) -> None:
         super().__init__(payload)
+        # TODO: Support _bulk mode
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
         self.abbreviation: str = payload["abbreviation"]
@@ -56,17 +76,11 @@ class Game(SRCObjectMixin):
         self.engines: list = payload["engines"]
         self.developers: list = payload["developers"]
         self.publishers: list = payload["publishers"]
-        self.moderators: list = payload["moderators"]
+        self.moderators: List[User] = [User(i) for i in payload["moderators"]["data"]]
         self._created: str = payload["created"]
         self.assets: Dict[str, Asset] = {
             k: Asset(v, http) for k, v in payload["assets"].items()
         }
-        self._embeds: Optional[Iterable] = embeds
-        # TODO: Ditch this idea and just add all possible embeds upon request
-        for e in self._embeds:
-            spl = e.split(".")
-            if spl[0] == "moderators":
-                self.moderators: Iterable[User] = [User(i) for i in self.moderators["data"]]
 
     def __str__(self) -> str:
         return self.name.international
