@@ -35,16 +35,12 @@ class Page:
     __slots__ = ("offset", "max", "size", "links", "data")
 
     @overload
-    def __init__(self, page_info: ..., data: ...) -> None:
-        self.data: List[Game] = ...
-        ...
+    def __init__(self, page_info: dict, data: List[Game]) -> None: ...
 
     @overload
-    def __init__(self, page_info: ..., data: ...) -> None:
-        self.data: List[User] = ...
-        ...
+    def __init__(self, page_info: dict, data: List[User]) -> None: ...
 
-    def __init__(self, page_info: dict, data: List[dict]) -> None:
+    def __init__(self, page_info: dict, data: List[Any]) -> None:
         self.offset: int = page_info["offset"]
         self.max: int = page_info["max"]
         self.size: int = page_info["size"]

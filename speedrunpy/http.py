@@ -26,11 +26,11 @@ SOFTWARE.
 import asyncio
 import json
 from typing import (
+    TYPE_CHECKING,
     Optional,
     ClassVar,
     Coroutine,
     TypeVar,
-    Iterable,
     Any,
     Union,
     Dict,
@@ -44,8 +44,9 @@ from .utils import urlify
 from .errors import HTTPException
 
 
-T = TypeVar("T")
-Response = Coroutine[Any, Any, T]
+# if TYPE_CHECKING:
+#     T = TypeVar("T")
+#     Response = Coroutine[Any, Any, T]
 
 
 async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
@@ -85,9 +86,13 @@ class HTTPClient:
         return ClientSession(headers={"User-Agent": self.user_agent})
 
     async def close(self) -> None:
-        await self._session.close()
+        """
+        Safely close session
+        """
+        if self._session:
+            await self._session.close()
 
-    async def request(self, route: Route, **kwargs) -> dict:
+    async def request(self, route: Route, **kwargs) -> Union[dict, str]:
         """|coro|
 
         Request data from speedrun.com api
@@ -115,6 +120,10 @@ class HTTPClient:
         # ran out of tries
         raise HTTPException from None
 
+    async def get_from_url(self, url: str) -> Optional[bytes]:
+        async with self._session.get(url) as resp: # type: ignore
+            return await resp.read()
+
     def _games(
         self,
         *,
@@ -133,7 +142,7 @@ class HTTPClient:
         _bulk: Optional[str],
         offset: Optional[int],
         max: Optional[int],
-    ) -> Response:
+    ):
         query = {}
 
         if name:
@@ -213,7 +222,7 @@ class HTTPClient:
         speedrunslive: Optional[str],
         offset: Optional[int],
         max: Optional[int],
-    ) -> Response:
+    ):
         query = {}
 
         if lookup:

@@ -22,30 +22,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
-from typing import Optional, Union
+from typing import Optional
 
 
 from .http import HTTPClient
 
 
-__all__ = "Asset"
-
-
-async def get_from_url(url, http: HTTPClient) -> Optional[bytes]:
-    async with http._session.get(url) as res:
-        return await res.read()
+__all__ = ("Asset",)
 
 
 class Asset:
+    """A class representing an Asset"""
+
     __slots__ = ("url", "_http")
 
-    def __init__(self, payload: Union[dict, str], http: HTTPClient) -> None:
+    def __init__(self, payload: dict, http: HTTPClient) -> None:
         self.url: str = payload["uri"]
         self._http: HTTPClient = http
 
     def __repr__(self) -> str:
         return f"<Asset url={self.url}>"
 
-    async def read(self):
-        return await get_from_url(self.url, self._http)
+    async def read(self) -> Optional[bytes]:
+        """Get asset's bytes from url"""
+        return await self._http.get_from_url(self.url)

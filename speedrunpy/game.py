@@ -82,7 +82,7 @@ class Game(SRCObjectMixin):
             k: Asset(v, http=http) for k, v in payload["assets"].items()
         }
 
-    def __str__(self) -> str:
+    def __str__(self) -> Optional[str]:
         return self.name.international
 
     def __repr__(self) -> str:

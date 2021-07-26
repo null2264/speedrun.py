@@ -33,14 +33,14 @@ __version__ = "0.0.1"
 from typing import Literal, NamedTuple
 
 
-from . import utils as utils
-from .asset import Asset as Asset
-from .client import Client as Client
+from . import utils
+from .asset import Asset
+from .client import Client
 from .errors import *
-from .game import Game as Game
-from .name import Name as Name
-from .page import Page as Page
-from .user import User as User
+from .game import Game
+from .name import Name
+from .page import Page
+from .user import User
 
 
 class VersionInfo(NamedTuple):

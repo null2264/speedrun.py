@@ -52,7 +52,7 @@ class User(SRCObjectMixin):
             "uri", None
         )
 
-    def __str__(self) -> str:
+    def __str__(self) -> Optional[str]:
         return self.name.international
 
     def __repr__(self) -> str:
