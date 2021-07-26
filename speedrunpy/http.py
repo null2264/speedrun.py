@@ -139,7 +139,7 @@ class HTTPClient:
         publisher: Optional[str],
         moderator: Optional[str],
         romhack: Optional[str],
-        _bulk: Optional[str],
+        _bulk: Optional[bool],
         offset: Optional[int],
         max: Optional[int],
     ):
@@ -190,22 +190,26 @@ class HTTPClient:
         if max:
             query["max"] = max
 
-        query["embed"] = ",".join(
-            (
-                "levels.variables",
-                "levels.categories.variables",
-                "categories.variables",
-                "moderators",
-                "gametypes",
-                "platforms",
-                "regions",
-                "genres",
-                "engines",
-                "developers",
-                "publishers",
-                "variables",
+        if not _bulk:
+            # Can't embed in _bulk mode
+            query["embed"] = ",".join(
+                (
+                    "levels.variables",
+                    "levels.categories.variables",
+                    "categories.variables",
+                    "moderators",
+                    "gametypes",
+                    "platforms",
+                    "regions",
+                    "genres",
+                    "engines",
+                    "developers",
+                    "publishers",
+                    "variables",
+                )
             )
-        )
+        else:
+            query["_bulk"] = "True"
 
         route = Route("GET", "/games", **query)
 

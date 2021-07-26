@@ -68,7 +68,7 @@ class Client:
         publisher: Optional[str] = None,
         moderator: Optional[str] = None,
         romhack: Optional[str] = None,
-        _bulk: Optional[str] = None,
+        _bulk: Optional[bool] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: Optional[bool] = False,

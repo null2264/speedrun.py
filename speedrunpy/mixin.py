@@ -23,9 +23,9 @@ SOFTWARE.
 """
 
 
-from typing import List
+from typing import List, Optional
 
 
 class SRCObjectMixin:
     def __init__(self, payload: dict) -> None:
-        self.links: List[dict] = payload["links"]
+        self.links: Optional[List[dict]] = payload.get("links")
