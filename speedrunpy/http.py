@@ -24,10 +24,35 @@ SOFTWARE.
 
 
 from aiohttp import ClientSession
-from typing import Optional
+from typing import (
+    TYPE_CHECKING,
+    Optional,
+    ClassVar,
+    Coroutine,
+    TypeVar,
+    Iterable,
+    Any
+)
 
 
-BASE_URL = "https://www.speedrun.com/api/v1"
+from .utils import urlify
+
+
+T = TypeVar("T")
+Response = Coroutine[Any, Any, T]
+
+
+class Route:
+
+    BASE_URL: ClassVar[str] = "https://www.speedrun.com/api/v1"
+
+    def __init__(self, method: str, path: str, **parameters: dict) -> None:
+        self.method: str = method
+        self.path: str = path
+        url = self.BASE_URL + self.path
+        if parameters:
+            url += urlify(**parameters)
+        self.url = url
 
 
 class HTTPClient:
@@ -45,7 +70,7 @@ class HTTPClient:
     async def close(self) -> None:
         await self._session.close()
 
-    async def _request(self, query: str, *, endpoint: str, method: str = "get") -> dict:
+    async def request(self, route: Route, **kwargs) -> dict:
         """|coro|
 
         Request data from speedrun.com api
@@ -54,9 +79,85 @@ class HTTPClient:
         if self._session is None:
             self._session = await self._generate_session()
 
-        action = getattr(self._session, method.lower(), self._session.get)
-        async with action(BASE_URL + endpoint + query) as res:
-            if res.status == 420:
+        async with self._session.request(route.method, route.url, **kwargs) as response:
+            data = await response.json()
+
+            if 300 > response.status >= 200:
+                return data
+
+            if response.status == 420:
                 raise RateLimited from None
-            data = await res.json()
-            return data
+
+    def _games(
+        self,
+        *,
+        name: Optional[str],
+        abbreviation: Optional[str],
+        released: Optional[int],
+        gametype: Optional[str],
+        platform: Optional[str],
+        region: Optional[str],
+        genre: Optional[str],
+        engine: Optional[str],
+        developer: Optional[str],
+        publisher: Optional[str],
+        moderator: Optional[str],
+        romhack: Optional[str],
+        _bulk: Optional[str],
+        offset: Optional[int],
+        max: Optional[int],
+        embeds: Optional[Iterable],
+    ) -> Response[dict]:
+        query = {}
+
+        if name:
+            query["name"] = name
+
+        if abbreviation:
+            query["abbreviation"] = abbreviation
+
+        if released:
+            query["released"] = released
+
+        if gametype:
+            query["gametype"] = gametype
+
+        if platform:
+            query["platform"] = platform
+
+        if region:
+            query["region"] = region
+
+        if genre:
+            query["genre"] = genre
+
+        if engine:
+            query["engine"] = engine
+
+        if developer:
+            query["developer"] = engine
+
+        if publisher:
+            query["publisher"] = publisher
+
+        if moderator:
+            query["moderator"] = moderator
+
+        if romhack:
+            query["romhack"] = romhack
+
+        if _bulk:
+            query["_bulk"] = _bulk
+
+        if offset:
+            query["offset"] = offset
+
+        if max:
+            query["max"] = max
+
+        if embeds:
+            query["embeds"] = ",".join(embeds)
+
+        route = Route("GET", "/games", **query)
+
+        return self.request(route)

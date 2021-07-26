@@ -24,7 +24,7 @@ SOFTWARE.
 
 
 import datetime
-from typing import Union, Dict
+from typing import Union, Dict, Optional, Iterable
 
 
 from .asset import Asset
@@ -34,7 +34,7 @@ from .name import Name
 
 
 class Game(SRCObjectMixin):
-    def __init__(self, payload: dict, http: HTTPClient) -> None:
+    def __init__(self, payload: dict, http: HTTPClient, embeds: Optional[Iterable] = None) -> None:
         super().__init__(payload)
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])

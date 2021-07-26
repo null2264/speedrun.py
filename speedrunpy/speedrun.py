@@ -27,7 +27,7 @@ import json
 
 
 from aiohttp import ClientSession
-from typing import Optional, Iterable
+from typing import Optional, Iterable, List
 
 
 from .errors import RateLimited
@@ -74,28 +74,26 @@ class SpeedrunPy:
 
         Get games data
         """
-        params = {
-            "name": name,
-            "abbreviation": abbreviation,
-            "released": released,
-            "gametype": gametype,
-            "platform": platform,
-            "region": region,
-            "genre": genre,
-            "engine": engine,
-            "developer": developer,
-            "publisher": publisher,
-            "moderator": moderator,
-            "romhack": romhack,
-            "_bulk": _bulk,
-            "offset": offset,
-            "max": max,
-            "embeds": ",".join(embeds or []),
-        }
-        query = urlify(**params)
+        data = await self._http._games(
+            name=name,
+            abbreviation=abbreviation,
+            released=released,
+            gametype=gametype,
+            platform=platform,
+            region=region,
+            genre=genre,
+            engine=engine,
+            developer=developer,
+            publisher=publisher,
+            moderator=moderator,
+            romhack=romhack,
+            _bulk=_bulk,
+            offset=offset,
+            max=max,
+            embeds=embeds,
+        )
 
-        data = await self._http._request(query, endpoint="/games")
-        games = [Game(i, http=self._http) for i in data["data"]]
+        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
 
         return Page(
             page_info=data["pagination"],
