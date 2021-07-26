@@ -69,6 +69,9 @@ class Game(SRCObjectMixin):
     def __eq__(self, other: Any) -> bool:
         return isinstance(other, Game) and self.id == other.id
 
+    def __ne__(self, other: Any) -> bool:
+        return not self.__eq__(other)
+
     @property
     def release_date(self) -> datetime.datetime:
         return datetime.datetime.fromisoformat(self._release_date)
