@@ -62,7 +62,7 @@ class Game(SRCObjectMixin):
             k: Asset(v, http) for k, v in payload["assets"].items()
         }
         self._embeds: Optional[Iterable] = embeds
-
+        # TODO: Ditch this idea and just add all possible embeds upon request
         for e in self._embeds:
             spl = e.split(".")
             if spl[0] == "moderators":
