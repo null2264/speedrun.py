@@ -21,14 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+from __future__ import annotations
 
 import datetime
-from typing import Iterable, Optional, List, Dict
+from typing import Optional
 
-
-from .asset import Asset
-from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
 from .utils import zulu_to_utc

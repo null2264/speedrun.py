@@ -21,10 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+from __future__ import annotations
 
 from typing import Any, List, overload
-
 
 from .game import Game
 from .user import User
@@ -34,10 +33,12 @@ class Page:
     __slots__ = ("offset", "max", "size", "links", "data")
 
     @overload
-    def __init__(self, page_info: dict, data: List[Game]) -> None: ...
+    def __init__(self, page_info: dict, data: List[Game]) -> None:
+        ...
 
     @overload
-    def __init__(self, page_info: dict, data: List[User]) -> None: ...
+    def __init__(self, page_info: dict, data: List[User]) -> None:
+        ...
 
     def __init__(self, page_info: dict, data: List[Any]) -> None:
         self.offset: int = page_info["offset"]

@@ -25,7 +25,6 @@ SOFTWARE.
 
 from typing import Optional
 
-
 from .http import HTTPClient
 
 
