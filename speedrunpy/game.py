@@ -34,6 +34,7 @@ from .mixin import SRCObjectMixin
 from .name import Name
 from .user import User
 from .utils import zulu_to_utc
+from .variable import Variable
 
 
 class Game(SRCObjectMixin):
@@ -58,6 +59,7 @@ class Game(SRCObjectMixin):
         "assets",
         "levels",
         "categories",
+        "variables",
     )
 
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
@@ -69,6 +71,7 @@ class Game(SRCObjectMixin):
         self.abbreviation: str = payload["abbreviation"]
         self.weblink: str = payload["weblink"]
 
+        # Optionals (will always returns None when _bulk mode active)
         self.released: Optional[int] = payload.get("released")
         self._release_date: Optional[str] = payload.get("release-date")
         self.ruleset: Optional[Dict[str, Union[bool, Dict]]] = payload.get("ruleset")
@@ -104,6 +107,11 @@ class Game(SRCObjectMixin):
         self.categories: Optional[List[Category]] = None
         if categories:
             self.categories = [Category(i) for i in categories["data"]]
+
+        variables: Optional[Dict] = payload.get("variables")
+        self.variables: Optional[List[Variable]] = None
+        if variables:
+            self.variables = [Variable(i) for i in variables["data"]]
 
     def __str__(self) -> Optional[str]:
         return self.name.international

@@ -27,6 +27,7 @@ from typing import List, Optional
 
 from aiohttp import ClientSession
 
+from .errors import NoDataFound
 from .game import Game
 from .http import HTTPClient
 from .page import Page
@@ -94,7 +95,7 @@ class Client:
         games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
-            raise RuntimeError
+            raise NoDataFound
 
         return Page(
             page_info=data["pagination"],
@@ -128,6 +129,6 @@ class Client:
         users = [User(i) for i in data["data"]]
 
         if error_on_empty and not users:
-            raise RuntimeError("No data found")
+            raise NoDataFound
 
         return Page(page_info=data["pagination"], data=users)

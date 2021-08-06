@@ -23,30 +23,35 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Optional
 
 from .mixin import SRCObjectMixin
 
 
-class Category(SRCObjectMixin):
-    __slots__ = ("id", "name", "weblink", "type", "rules", "players", "misc")
+class Variable(SRCObjectMixin):
+    __slots__ = (
+        "id",
+        "name",
+        "category",
+        "type",
+        "mandatory",
+        "user_defined",
+        "obsoletes",
+        "values",
+        "is_subcategory",
+    )
 
     def __init__(self, payload: dict) -> None:
         super().__init__(payload)
 
         self.id: str = payload["id"]
         self.name: str = payload["name"]
-        self.weblink: str = payload["weblink"]
-        self.type: str = payload["type"]
-        self.rules: str = payload["rules"]
-        self.players: Dict[str, Any] = payload["players"]
-        self.misc: bool = payload["miscellaneous"]
-
-    def __str__(self) -> str:
-        return self.name
+        self.category: Optional[str] = payload["category"]
+        self.type: Optional[str] = payload.get("scope", {}).get("type")
+        self.mandatory: bool = payload["mandatory"]
+        self.user_defined: bool = payload["user-defined"]
+        self.values: dict = payload["values"]
+        self.is_subcategory: bool = payload["is-subcategory"]
 
     def __repr__(self) -> str:
-        return (
-            f"<{self.__class__.__name__} id={self.id} "
-            f"name={self.name} type={self.type}>"
-        )
+        return f"<{self.__class__.__name__} id={self.id} name={self.name}>"

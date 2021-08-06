@@ -32,7 +32,6 @@ __version__ = "21.8.0a"
 
 from typing import Literal, NamedTuple
 
-
 from . import utils
 from .asset import Asset
 from .client import Client
@@ -41,6 +40,7 @@ from .game import Game
 from .name import Name
 from .page import Page
 from .user import User
+from .variable import Variable
 
 
 class VersionInfo(NamedTuple):

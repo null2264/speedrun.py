@@ -24,5 +24,15 @@ SOFTWARE.
 
 
 class HTTPException(Exception):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Failed to get data from speedrun.com")
+
+
+class SpeedrunException(Exception):
+    """Base exception for speedrun.py"""
+    pass
+
+
+class NoDataFound(SpeedrunException):
+    def __init__(self, message: str = None) -> None:
+        super().__init__(message or "No data found!")

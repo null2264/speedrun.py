@@ -158,9 +158,6 @@ class HTTPClient:
         if romhack:
             query["romhack"] = romhack
 
-        # if _bulk:
-        #     query["_bulk"] = _bulk
-
         if offset:
             query["offset"] = offset
 
@@ -185,8 +182,8 @@ class HTTPClient:
                     "variables",
                 )
             )
-        else:
-            query["_bulk"] = "True"
+
+        query["_bulk"] = str(_bulk)
 
         route = Route("GET", "/games", **query)
 
