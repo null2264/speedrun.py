@@ -4,8 +4,8 @@ An asynchronous API wrapper for speedrun.com
 
 ## Coverage
 
-- [ ] Categories
-- [ ] Games
+- [ ] Categories (Class only)
+- [ ] Games (Class complete, TODO: check the coverage)
 - [ ] Guests
 - [ ] Leaderboards
 - [ ] Levels
@@ -16,5 +16,5 @@ An asynchronous API wrapper for speedrun.com
 - [ ] Regions
 - [ ] Runs
 - [ ] Series
-- [ ] Users
-- [ ] Variables
+- [ ] Users (TODO: check the coverage)
+- [ ] Variables (Class only)
