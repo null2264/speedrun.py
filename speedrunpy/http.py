@@ -24,17 +24,37 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
-from typing import TYPE_CHECKING, Any, ClassVar, Coroutine, Optional, TypeVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    ClassVar,
+    Coroutine,
+    Dict,
+    Optional,
+    TypeVar,
+    Union,
+)
 
-from aiohttp import ClientSession
+from aiohttp import ClientResponse, ClientSession
 
 from .errors import HTTPException
-from .utils import json_or_text, urlify
+from .utils import from_json, urlify
 
 
 if TYPE_CHECKING:
     T = TypeVar("T")
     Response = Coroutine[Any, Any, T]
+
+
+async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
+    text = await response.text(encoding="utf-8")
+    try:
+        if response.headers["content-type"] == "application/json":
+            return from_json(text)
+    except KeyError:
+        pass
+
+    return text
 
 
 class Route:
@@ -51,7 +71,15 @@ class Route:
 
 
 class HTTPClient:
-    def __init__(self, *, session: Optional[ClientSession] = None, user_agent: str):
+    def __init__(
+        self,
+        *,
+        user_agent: str,
+        token: Optional[str] = None,
+        session: Optional[ClientSession] = None,
+    ):
+        self.token = token
+        self._authenticated = self.token is not None
         self._session = session
         self.user_agent = user_agent
 
