@@ -65,7 +65,7 @@ class Client:
         publisher: Optional[str] = None,
         moderator: Optional[str] = None,
         romhack: Optional[str] = None,
-        _bulk: Optional[bool] = None,
+        _bulk: bool = False,
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = True,
@@ -101,6 +101,12 @@ class Client:
             page_info=data["pagination"],
             data=games,
         )
+
+    async def get_game_by_id(self, *, id: str) -> Game:
+        """Get a game data by its ID or Abbreviation"""
+        data = await self._http._game_by_id(id=id)
+
+        return Game(data["data"], http=self._http)
 
     async def get_users(
         self,

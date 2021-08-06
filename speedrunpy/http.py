@@ -42,6 +42,8 @@ from .utils import from_json, urlify
 
 
 if TYPE_CHECKING:
+    from .types import SpeedrunResponse, SpeedrunPagedResponse
+
     T = TypeVar("T")
     Response = Coroutine[Any, Any, T]
 
@@ -55,6 +57,22 @@ async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
         pass
 
     return text
+
+
+EMBED_GAMES = (
+    "levels.variables",
+    "levels.categories.variables",
+    "categories.variables",
+    "moderators",
+    "gametypes",
+    "platforms",
+    "regions",
+    "genres",
+    "engines",
+    "developers",
+    "publishers",
+    "variables",
+)
 
 
 class Route:
@@ -147,7 +165,7 @@ class HTTPClient:
         _bulk: Optional[bool],
         offset: Optional[int],
         max: Optional[int],
-    ) -> Response[None]:
+    ) -> Response[SpeedrunPagedResponse]:
         query = {}
 
         if name:
@@ -194,26 +212,18 @@ class HTTPClient:
 
         if not _bulk:
             # Can't embed in _bulk mode
-            query["embed"] = ",".join(
-                (
-                    "levels.variables",
-                    "levels.categories.variables",
-                    "categories.variables",
-                    "moderators",
-                    "gametypes",
-                    "platforms",
-                    "regions",
-                    "genres",
-                    "engines",
-                    "developers",
-                    "publishers",
-                    "variables",
-                )
-            )
+            query["embed"] = ",".join(EMBED_GAMES)
 
         query["_bulk"] = str(_bulk)
 
         route = Route("GET", "/games", **query)
+
+        return self.request(route)
+
+    def _game_by_id(self, *, id: str) -> Response[SpeedrunResponse]:
+        query = {"embed": ",".join(EMBED_GAMES)}
+
+        route = Route("GET", f"/games/{id}", **query)
 
         return self.request(route)
 
@@ -228,7 +238,7 @@ class HTTPClient:
         speedrunslive: Optional[str],
         offset: Optional[int],
         max: Optional[int],
-    ) -> Response[None]:
+    ) -> Response[SpeedrunPagedResponse]:
         query = {}
 
         if lookup:
