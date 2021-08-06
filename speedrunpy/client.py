@@ -68,7 +68,7 @@ class Client:
         _bulk: Optional[bool] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
-        error_on_empty: Optional[bool] = False,
+        error_on_empty: bool = True,
     ) -> Page:
         """|coro|
 
@@ -113,7 +113,7 @@ class Client:
         speedrunslive: Optional[str] = None,
         offset: Optional[int] = None,
         max: Optional[int] = None,
-        error_on_empty: Optional[bool] = False,
+        error_on_empty: bool = True,
     ) -> Page:
         data = await self._http._users(
             lookup=lookup,
