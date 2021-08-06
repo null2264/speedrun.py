@@ -23,34 +23,13 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-
 import asyncio
-import json
-from typing import (
-    Optional,
-    ClassVar,
-    Any,
-    Union,
-    Dict,
-)
+from typing import ClassVar, Optional, Union
 
+from aiohttp import ClientSession
 
-from aiohttp import ClientSession, ClientResponse
-
-
-from .utils import urlify
 from .errors import HTTPException
-
-
-async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
-    text = await response.text(encoding="utf-8")
-    try:
-        if response.headers["content-type"] == "application/json":
-            return json.loads(text)
-    except KeyError:
-        pass
-
-    return text
+from .utils import json_or_text, urlify
 
 
 class Route:

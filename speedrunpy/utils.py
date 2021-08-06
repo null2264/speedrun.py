@@ -21,6 +21,19 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
+
+from typing import Any, Dict, Union
+
+from aiohttp import ClientResponse
+
+
+try:
+    import orjson  # type: ignore
+    JSON = orjson
+except ImportError:
+    import json
+    JSON = json
 
 
 def urlify(**kwargs) -> str:
@@ -35,3 +48,14 @@ def urlify(**kwargs) -> str:
 
 def zulu_to_utc(iso_datetime: str) -> str:
     return iso_datetime.rstrip("Z") + "+00:00"
+
+
+async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
+    text = await response.text(encoding="utf-8")
+    try:
+        if response.headers["content-type"] == "application/json":
+            return JSON.loads(text)
+    except KeyError:
+        pass
+
+    return text
