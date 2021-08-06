@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from .mixin import SRCObjectMixin
 
@@ -41,7 +41,7 @@ class Variable(SRCObjectMixin):
         "is_subcategory",
     )
 
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: Dict[str, Any]) -> None:
         super().__init__(payload)
 
         self.id: str = payload["id"]
@@ -50,7 +50,8 @@ class Variable(SRCObjectMixin):
         self.type: Optional[str] = payload.get("scope", {}).get("type")
         self.mandatory: bool = payload["mandatory"]
         self.user_defined: bool = payload["user-defined"]
-        self.values: dict = payload["values"]
+        self.obsoletes: bool = payload["obsoletes"]
+        self.values: Dict[str, Any] = payload["values"]
         self.is_subcategory: bool = payload["is-subcategory"]
 
     def __repr__(self) -> str:

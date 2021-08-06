@@ -24,9 +24,19 @@ SOFTWARE.
 from __future__ import annotations
 
 from functools import wraps
-from typing import Any, Union
+from typing import TYPE_CHECKING, Any, Callable, Dict, TypeVar, Union
 
 from .errors import AuthenticationRequired
+
+
+C = TypeVar("C", bound="Client")
+T = TypeVar("T")
+if TYPE_CHECKING:
+    from typing_extensions import Concatenate, ParamSpec
+
+    from .client import Client
+
+    B = ParamSpec("B")
 
 
 try:
@@ -53,7 +63,7 @@ def zulu_to_utc(iso_datetime: str) -> str:
     return iso_datetime.rstrip("Z") + "+00:00"
 
 
-def from_json(obj: Union[str, bytes]) -> dict:
+def from_json(obj: Union[str, bytes]) -> Dict[str, Any]:
     return JSON.loads(obj)
 
 
@@ -61,9 +71,11 @@ def to_json(obj: Any) -> Union[str, bytes]:
     return JSON.dumps(obj)
 
 
-def require_authentication(func):
+def require_authentication(
+    func: Callable[Concatenate[C, B], T]
+) -> Callable[Concatenate[C, B], T]:
     @wraps(func)
-    def wrapper(client, *args, **kwargs) -> Any:
+    def wrapper(client: C, *args: B.args, **kwargs: B.kwargs) -> T:
         if not client._http._authenticated:
             raise AuthenticationRequired
 

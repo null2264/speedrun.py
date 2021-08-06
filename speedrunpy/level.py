@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from .category import Category
 from .mixin import SRCObjectMixin
@@ -32,7 +32,7 @@ from .mixin import SRCObjectMixin
 class Level(SRCObjectMixin):
     __slots__ = ("id", "name", "weblink", "rules", "categories")
 
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: Dict[str, Any]) -> None:
         self.id: str = payload["id"]
         self.name: str = payload["name"]
         self.weblink: str = payload["weblink"]

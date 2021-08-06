@@ -79,13 +79,13 @@ class Route:
 
     BASE_URL: ClassVar[str] = "https://www.speedrun.com/api/v1"
 
-    def __init__(self, method: str, path: str, **parameters: dict) -> None:
+    def __init__(self, method: str, path: str, **parameters: Dict[str, Any]) -> None:
         self.method: str = method
         self.path: str = path
         url = self.BASE_URL + self.path
         if parameters:
             url += urlify(**parameters)
-        self.url = url
+        self.url: str = url
 
 
 class HTTPClient:
@@ -96,10 +96,10 @@ class HTTPClient:
         token: Optional[str] = None,
         session: Optional[ClientSession] = None,
     ):
-        self.token = token
-        self._authenticated = self.token is not None
-        self._session = session
-        self.user_agent = user_agent
+        self.token: Optional[str] = token
+        self._authenticated: bool = self.token is not None
+        self._session: Optional[ClientSession] = session
+        self.user_agent: str = user_agent
 
     async def _generate_session(self) -> ClientSession:
         """|coro|
@@ -115,7 +115,7 @@ class HTTPClient:
         if self._session:
             await self._session.close()
 
-    async def request(self, route: Route, **kwargs) -> Any:
+    async def request(self, route: Route, **kwargs: Dict[str, Any]) -> Any:
         """|coro|
 
         Request data from speedrun.com api

@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from .mixin import SRCObjectMixin
 from .name import Name
@@ -32,12 +32,12 @@ from .utils import zulu_to_utc
 
 
 class User(SRCObjectMixin):
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: Dict[str, Any]) -> None:
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
         self.pronouns: Optional[str] = payload["pronouns"]
         self.weblink: str = payload["weblink"]
-        self.name_style: dict = payload["name-style"]
+        self.name_style: Dict[str, Any] = payload["name-style"]
         self.role: str = payload["role"]
         self._signup: str = payload["signup"]
         self.location: Optional[str] = payload["location"]

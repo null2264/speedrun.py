@@ -23,11 +23,11 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
 
 class SRCObjectMixin:
     __slots__ = ("links",)
 
-    def __init__(self, payload: dict) -> None:
-        self.links: Optional[List[dict]] = payload.get("links")
+    def __init__(self, payload: Dict[str, Any]) -> None:
+        self.links: Optional[List[Dict[str, Any]]] = payload.get("links")

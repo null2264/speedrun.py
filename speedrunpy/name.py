@@ -23,13 +23,13 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 
 class Name:
     __slots__ = ("international", "japanese", "twitch")
 
-    def __init__(self, payload: dict) -> None:
+    def __init__(self, payload: Dict[str, Any]) -> None:
         self.international: Optional[str] = payload.get("international")
         self.japanese: Optional[str] = payload.get("japanese")
         self.twitch: Optional[str] = payload.get("twitch")

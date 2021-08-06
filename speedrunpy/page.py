@@ -23,28 +23,28 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, List, overload
+from typing import Any, Dict, List, overload
 
 from .game import Game
 from .user import User
+from .mixin import SRCObjectMixin
 
 
-class Page:
-    __slots__ = ("offset", "max", "size", "links", "data")
+class Page(SRCObjectMixin):
+    __slots__ = ("offset", "max", "size", "data")
 
     @overload
-    def __init__(self, page_info: dict, data: List[Game]) -> None:
+    def __init__(self, page_info: Dict[str, Any], data: List[Game]) -> None:
         ...
 
     @overload
-    def __init__(self, page_info: dict, data: List[User]) -> None:
+    def __init__(self, page_info: Dict[str, Any], data: List[User]) -> None:
         ...
 
-    def __init__(self, page_info: dict, data: List[Any]) -> None:
+    def __init__(self, page_info: Dict[str, Any], data: List[Any]) -> None:
         self.offset: int = page_info["offset"]
         self.max: int = page_info["max"]
         self.size: int = page_info["size"]
-        self.links: list = page_info["links"]
         self.data: List[Any] = data
 
     def __repr__(self) -> str:

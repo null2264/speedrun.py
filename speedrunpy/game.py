@@ -74,17 +74,17 @@ class Game(SRCObjectMixin):
         # Optionals (will always returns None when _bulk mode active)
         self.released: Optional[int] = payload.get("released")
         self._release_date: Optional[str] = payload.get("release-date")
-        self.ruleset: Optional[Dict[str, Union[bool, Dict]]] = payload.get("ruleset")
+        self.ruleset: Optional[Dict[str, Union[bool, Any]]] = payload.get("ruleset")
         self.romhack: Optional[bool] = payload.get("romhack")
-        self.gametypes: Optional[Dict] = payload.get("gametypes")
-        self.platforms: Optional[Dict] = payload.get("platforms")
-        self.regions: Optional[Dict] = payload.get("regions")
-        self.genres: Optional[Dict] = payload.get("genres")
-        self.engines: Optional[Dict] = payload.get("engines")
-        self.developers: Optional[Dict] = payload.get("developers")
-        self.publishers: Optional[Dict] = payload.get("publishers")
+        self.gametypes: Optional[Dict[str, Any]] = payload.get("gametypes")
+        self.platforms: Optional[Dict[str, Any]] = payload.get("platforms")
+        self.regions: Optional[Dict[str, Any]] = payload.get("regions")
+        self.genres: Optional[Dict[str, Any]] = payload.get("genres")
+        self.engines: Optional[Dict[str, Any]] = payload.get("engines")
+        self.developers: Optional[Dict[str, Any]] = payload.get("developers")
+        self.publishers: Optional[Dict[str, Any]] = payload.get("publishers")
 
-        moderators: Optional[Dict] = payload.get("moderators", dict()).get("data")
+        moderators: Optional[List[Any]] = payload.get("moderators", dict()).get("data")
         self.moderators: Optional[List[User]] = None
         if moderators:
             # NOTE: This will NOT include moderator's role,
@@ -93,22 +93,22 @@ class Game(SRCObjectMixin):
 
         self._created: Optional[str] = payload.get("created")
 
-        assets: Optional[Dict] = payload.get("assets")
+        assets: Optional[Dict[str, Any]] = payload.get("assets")
         self.assets: Optional[Dict[str, Asset]] = None
         if assets:
             self.assets = {k: Asset(v, http=http) for k, v in payload["assets"].items()}
 
-        levels: Optional[Dict] = payload.get("levels")
+        levels: Optional[Dict[str, Any]] = payload.get("levels")
         self.levels: Optional[List[Level]] = None
         if levels:
             self.levels = [Level(i) for i in levels["data"]]
 
-        categories: Optional[Dict] = payload.get("categories")
+        categories: Optional[Dict[str, Any]] = payload.get("categories")
         self.categories: Optional[List[Category]] = None
         if categories:
             self.categories = [Category(i) for i in categories["data"]]
 
-        variables: Optional[Dict] = payload.get("variables")
+        variables: Optional[Dict[str, Any]] = payload.get("variables")
         self.variables: Optional[List[Variable]] = None
         if variables:
             self.variables = [Variable(i) for i in variables["data"]]
