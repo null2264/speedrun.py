@@ -6,6 +6,7 @@ An asynchronous API wrapper for speedrun.com
 
 | Name          | Status | Comments                                  |
 |---------------|--------|-------------------------------------------|
+| Authentication| ?      |                                           |
 | Categories    | ?      | Class only                                |
 | Games         | ?      | Class completed, TODO: check the coverege |
 | Guests        | ?      |                                           |
