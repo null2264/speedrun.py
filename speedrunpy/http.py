@@ -24,12 +24,17 @@ SOFTWARE.
 from __future__ import annotations
 
 import asyncio
-from typing import ClassVar, Optional, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Coroutine, Optional, TypeVar
 
 from aiohttp import ClientSession
 
 from .errors import HTTPException
 from .utils import json_or_text, urlify
+
+
+if TYPE_CHECKING:
+    T = TypeVar("T")
+    Response = Coroutine[Any, Any, T]
 
 
 class Route:
@@ -64,7 +69,7 @@ class HTTPClient:
         if self._session:
             await self._session.close()
 
-    async def request(self, route: Route, **kwargs) -> Union[dict, str]:
+    async def request(self, route: Route, **kwargs) -> Any:
         """|coro|
 
         Request data from speedrun.com api
@@ -114,7 +119,7 @@ class HTTPClient:
         _bulk: Optional[bool],
         offset: Optional[int],
         max: Optional[int],
-    ):
+    ) -> Response[None]:
         query = {}
 
         if name:
@@ -198,7 +203,7 @@ class HTTPClient:
         speedrunslive: Optional[str],
         offset: Optional[int],
         max: Optional[int],
-    ):
+    ) -> Response[None]:
         query = {}
 
         if lookup:
