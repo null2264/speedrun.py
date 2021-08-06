@@ -23,7 +23,11 @@ SOFTWARE.
 """
 from __future__ import annotations
 
+from functools import wraps
 from typing import Any, Union
+
+from .errors import AuthenticationRequired
+
 
 try:
     import orjson
@@ -55,3 +59,14 @@ def from_json(obj: Union[str, bytes]) -> dict:
 
 def to_json(obj: Any) -> Union[str, bytes]:
     return JSON.dumps(obj)
+
+
+def require_authentication(func):
+    @wraps(func)
+    def wrapper(client, *args, **kwargs) -> Any:
+        if not client._http._authenticated:
+            raise AuthenticationRequired
+
+        return func(client, *args, **kwargs)
+
+    return wrapper

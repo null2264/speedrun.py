@@ -30,9 +30,17 @@ class HTTPException(Exception):
 
 class SpeedrunException(Exception):
     """Base exception for speedrun.py"""
+
     pass
 
 
 class NoDataFound(SpeedrunException):
     def __init__(self, message: str = None) -> None:
         super().__init__(message or "No data found!")
+
+
+class AuthenticationRequired(SpeedrunException):
+    def __init__(self, message: str = None) -> None:
+        super().__init__(
+            message or "This method requires you to be authenticated to the API."
+        )
