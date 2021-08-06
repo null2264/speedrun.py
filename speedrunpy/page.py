@@ -27,7 +27,6 @@ from typing import Any, List, overload
 
 
 from .game import Game
-from .http import HTTPClient
 from .user import User
 
 

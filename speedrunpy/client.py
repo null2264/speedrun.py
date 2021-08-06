@@ -21,20 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
 
-
-import json
-
+from typing import List, Optional
 
 from aiohttp import ClientSession
-from typing import Optional, Iterable, List
-
 
 from .game import Game
 from .http import HTTPClient
 from .page import Page
 from .user import User
-from .utils import urlify
 
 
 class Client:
@@ -95,9 +91,7 @@ class Client:
             max=max,
         )
 
-        games: List[Game] = [
-            Game(i, http=self._http) for i in data["data"]
-        ]
+        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
             raise RuntimeError

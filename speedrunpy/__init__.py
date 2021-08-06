@@ -27,7 +27,7 @@ __title__ = "speedrun.py"
 __author__ = "null2264"
 __license__ = "MIT"
 __copyright__ = "Copyright 2021-present null2264"
-__version__ = "21.8.0"
+__version__ = "21.8.0a"
 
 
 from typing import Literal, NamedTuple

@@ -1,10 +1,11 @@
 [tool.poetry]
 name = "speedrun.py"
-version = "21.8.0"
+version = "21.8.0a"
 description = "An asynchronous API wrapper for speedrun.com"
 authors = ["null2264"]
 
 license = "MIT"
+
 readme = "README.md"
 
 packages = [
@@ -16,7 +17,20 @@ python = "^3.8"
 aiohttp = "^3.6.2"
 
 [tool.poetry.dev-dependencies]
+black = "^21.7b0"
+isort = "^5.9.3"
+pyproject-flake8 = "^0.0.1-alpha.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.flake8]
+max-line-length = 88
+select = "C,E,F,W,B,B950"
+extend-ignore = "E203,E501"
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+lines_after_imports = 2

@@ -23,10 +23,8 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-
 import datetime
-from typing import Union, Dict, Optional, Iterable, Any, List
-
+from typing import Any, Dict, List, Optional, Union
 
 from .asset import Asset
 from .category import Category
@@ -62,7 +60,7 @@ class Game(SRCObjectMixin):
         "categories",
     )
 
-    def __init__(self, payload: dict, http: HTTPClient) -> None:
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload)
 
         # Dataset given in _bulk mode
@@ -86,6 +84,8 @@ class Game(SRCObjectMixin):
         moderators: Optional[Dict] = payload.get("moderators", dict()).get("data")
         self.moderators: Optional[List[User]] = None
         if moderators:
+            # NOTE: This will NOT include moderator's role,
+            # Because mod role is broken (verifier referred as super-mod in the api)
             self.moderators = [User(i) for i in moderators]
 
         self._created: Optional[str] = payload.get("created")
@@ -120,7 +120,9 @@ class Game(SRCObjectMixin):
     @property
     def release_date(self) -> Optional[datetime.datetime]:
         if self._release_date:
-            return datetime.datetime.fromisoformat(self._release_date)
+            return datetime.datetime.fromisoformat(self._release_date).replace(
+                tzinfo=datetime.timezone.utc
+            )
 
     @property
     def created(self) -> Optional[datetime.datetime]:

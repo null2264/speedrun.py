@@ -21,16 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
 
 
 import asyncio
 import json
 from typing import (
-    TYPE_CHECKING,
     Optional,
     ClassVar,
-    Coroutine,
-    TypeVar,
     Any,
     Union,
     Dict,
@@ -42,11 +40,6 @@ from aiohttp import ClientSession, ClientResponse
 
 from .utils import urlify
 from .errors import HTTPException
-
-
-# if TYPE_CHECKING:
-#     T = TypeVar("T")
-#     Response = Coroutine[Any, Any, T]
 
 
 async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
@@ -121,7 +114,7 @@ class HTTPClient:
         raise HTTPException from None
 
     async def get_from_url(self, url: str) -> Optional[bytes]:
-        async with self._session.get(url) as resp: # type: ignore
+        async with self._session.get(url) as resp:  # type: ignore
             return await resp.read()
 
     def _games(

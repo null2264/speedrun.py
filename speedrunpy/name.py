@@ -34,7 +34,7 @@ class Name:
         self.japanese: Optional[str] = payload.get("japanese")
         self.twitch: Optional[str] = payload.get("twitch")
 
-    def __str__(self) -> str:
+    def __str__(self) -> Optional[str]:
         return self.international or self.twitch or self.japanese
 
     def __repr__(self) -> str:
