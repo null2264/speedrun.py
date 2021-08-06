@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "speedrun.py"
-version = "21.8.0a"
+version = "21.8.1a"
 description = "An asynchronous API wrapper for speedrun.com"
 authors = ["null2264"]
 
