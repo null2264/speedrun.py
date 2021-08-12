@@ -74,6 +74,17 @@ EMBED_GAMES = (
     "variables",
 )
 
+EMBED_LEADERBOARDS = (
+    "category",
+    "level",
+    "players",
+    "regions",
+    "platforms",
+    "variables",
+)
+
+FULL_EMBED_LEADERBOARDS = ("game",) + EMBED_LEADERBOARDS
+
 
 class Route:
 
@@ -226,6 +237,80 @@ class HTTPClient:
         route = Route("GET", f"/games/{id}", **query)
 
         return self.request(route)
+
+    def _derived_games(
+        self,
+        base_game_id: str,
+        /,
+        *,
+        name: Optional[str],
+        abbreviation: Optional[str],
+        released: Optional[int],
+        gametype: Optional[str],
+        platform: Optional[str],
+        region: Optional[str],
+        genre: Optional[str],
+        engine: Optional[str],
+        developer: Optional[str],
+        publisher: Optional[str],
+        moderator: Optional[str],
+        _bulk: Optional[bool],
+        offset: Optional[int],
+        max: Optional[int],
+    ) -> Response[SpeedrunPagedResponse]:
+        query = {}
+
+        if name:
+            query["name"] = name
+
+        if abbreviation:
+            query["abbreviation"] = abbreviation
+
+        if released:
+            query["released"] = released
+
+        if gametype:
+            query["gametype"] = gametype
+
+        if platform:
+            query["platform"] = platform
+
+        if region:
+            query["region"] = region
+
+        if genre:
+            query["genre"] = genre
+
+        if engine:
+            query["engine"] = engine
+
+        if developer:
+            query["developer"] = engine
+
+        if publisher:
+            query["publisher"] = publisher
+
+        if moderator:
+            query["moderator"] = moderator
+
+        if offset:
+            query["offset"] = offset
+
+        if max:
+            query["max"] = max
+
+        if not _bulk:
+            # Can't embed in _bulk mode
+            query["embed"] = ",".join(EMBED_GAMES)
+
+        query["_bulk"] = str(_bulk)
+
+        route = Route("GET", f"/games/{base_game_id}/derived-games", **query)
+
+        return self.request(route)
+
+    def _game_records(self, game_id):
+        pass
 
     def _users(
         self,

@@ -23,34 +23,27 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, overload, TYPE_CHECKING
+from typing import Any, Dict, Union, TYPE_CHECKING, Optional
 
+from .category import Category
 from .mixin import SRCObjectMixin
+from .http import HTTPClient
 
 if TYPE_CHECKING:
     from .game import Game
-    from .user import User
 
 
-class Page(SRCObjectMixin):
-    __slots__ = ("offset", "max", "size", "data")
+class Leaderboard(SRCObjectMixin):
 
-    @overload
-    def __init__(self, page_info: Dict[str, Any], data: List[Game]) -> None:
-        ...
+    def __init__(self, payload: Dict[str, Any], http: Optional[HTTPClient] = None) -> None:
 
-    @overload
-    def __init__(self, page_info: Dict[str, Any], data: List[User]) -> None:
-        ...
+        game: Union[str, Dict[str, Any]] = payload["game"]
+        if isinstance(game, dict) and http:
+            self.game: Union[str, Game] = Game(game["data"], http=http)
+        elif isinstance(game, str):
+            self.game = game
+        else:
+            self.game = game["data"]["id"]
 
-    def __init__(self, page_info: Dict[str, Any], data: List[Any]) -> None:
-        self.offset: int = page_info["offset"]
-        self.max: int = page_info["max"]
-        self.size: int = page_info["size"]
-        self.data: List[Any] = data
-
-    def __repr__(self) -> str:
-        return (
-            f"<{self.__class__.__name__} offset={self.offset} "
-            f"max={self.max} size={self.size} data={self.data!r}>"
-        )
+        self.category = Category(payload["categories"]["data"])
+        self.runs = payload["runs"]  # TODO: Make Run class

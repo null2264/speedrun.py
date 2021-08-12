@@ -28,10 +28,12 @@ from typing import Any, Dict, List, Optional, Union
 
 from .asset import Asset
 from .category import Category
+from .errors import NoDataFound
 from .http import HTTPClient
 from .level import Level
 from .mixin import SRCObjectMixin
 from .name import Name
+from .page import Page
 from .user import User
 from .utils import zulu_to_utc
 from .variable import Variable
@@ -39,6 +41,7 @@ from .variable import Variable
 
 class Game(SRCObjectMixin):
     __slots__ = (
+        "_http",
         "id",
         "name",
         "abbreviation",
@@ -64,6 +67,8 @@ class Game(SRCObjectMixin):
 
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload)
+
+        self._http = http
 
         # Dataset given in _bulk mode
         self.id: str = payload["id"]
@@ -96,7 +101,9 @@ class Game(SRCObjectMixin):
         assets: Optional[Dict[str, Any]] = payload.get("assets")
         self.assets: Optional[Dict[str, Asset]] = None
         if assets:
-            self.assets = {k: Asset(v, http=http) for k, v in payload["assets"].items()}
+            self.assets = {
+                k: Asset(v, http=self._http) for k, v in payload["assets"].items()
+            }
 
         levels: Optional[Dict[str, Any]] = payload.get("levels")
         self.levels: Optional[List[Level]] = None
@@ -137,3 +144,59 @@ class Game(SRCObjectMixin):
         if self._created:
             created = zulu_to_utc(self._created)
             return datetime.datetime.fromisoformat(created)
+
+    async def get_derived_games(
+        self,
+        *,
+        name: Optional[str] = None,
+        abbreviation: Optional[str] = None,
+        released: Optional[int] = None,
+        gametype: Optional[str] = None,
+        platform: Optional[str] = None,
+        region: Optional[str] = None,
+        genre: Optional[str] = None,
+        engine: Optional[str] = None,
+        developer: Optional[str] = None,
+        publisher: Optional[str] = None,
+        moderator: Optional[str] = None,
+        _bulk: bool = False,
+        offset: Optional[int] = None,
+        max: Optional[int] = None,
+        error_on_empty: bool = False,
+    ):
+        """|coro|
+
+        Get derived games
+        """
+        data = await self._http._derived_games(
+            self.id,
+            name=name,
+            abbreviation=abbreviation,
+            released=released,
+            gametype=gametype,
+            platform=platform,
+            region=region,
+            genre=genre,
+            engine=engine,
+            developer=developer,
+            publisher=publisher,
+            moderator=moderator,
+            _bulk=_bulk,
+            offset=offset,
+            max=max,
+        )
+
+        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
+
+        if error_on_empty and not games:
+            raise NoDataFound
+
+        return Page(
+            page_info=data["pagination"],
+            data=games,
+        )
+
+    get_romhacks = get_derived_games
+
+    async def get_records(self):
+        pass
