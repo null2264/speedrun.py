@@ -27,7 +27,7 @@ __title__ = "speedrun.py"
 __author__ = "null2264"
 __license__ = "MIT"
 __copyright__ = "Copyright 2021-present null2264"
-__version__ = "21.8.1a"
+__version__ = "21.8.2a"
 
 
 from typing import Literal, NamedTuple
@@ -51,5 +51,5 @@ class VersionInfo(NamedTuple):
 
 
 version_info: VersionInfo = VersionInfo(
-    year=21, month=8, update=1, releaselevel="alpha"
+    year=21, month=8, update=2, releaselevel="alpha"
 )
