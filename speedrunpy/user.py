@@ -26,13 +26,17 @@ from __future__ import annotations
 import datetime
 from typing import Any, Dict, Optional
 
+from .asset import Asset
+from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
 from .utils import zulu_to_utc
 
 
 class User(SRCObjectMixin):
-    def __init__(self, payload: Dict[str, Any]) -> None:
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
+        self._http = http
+
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
         self.pronouns: Optional[str] = payload["pronouns"]
@@ -48,6 +52,13 @@ class User(SRCObjectMixin):
         self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get(
             "uri", None
         )
+
+        assets: Optional[Dict[str, Any]] = payload.get("assets")
+        self.assets: Optional[Dict[str, Asset]]
+        if assets:
+            self.assets = {
+                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
+            }
 
     def __str__(self) -> Optional[str]:
         return self.name.international

@@ -94,7 +94,7 @@ class Game(SRCObjectMixin):
         if moderators:
             # NOTE: This will NOT include moderator's role,
             # Because mod role is broken (verifier referred as super-mod in the api)
-            self.moderators = [User(i) for i in moderators]
+            self.moderators = [User(i, http=self._http) for i in moderators]
 
         self._created: Optional[str] = payload.get("created")
 
@@ -102,7 +102,7 @@ class Game(SRCObjectMixin):
         self.assets: Optional[Dict[str, Asset]] = None
         if assets:
             self.assets = {
-                k: Asset(v, http=self._http) for k, v in payload["assets"].items()
+                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
             }
 
         levels: Optional[Dict[str, Any]] = payload.get("levels")

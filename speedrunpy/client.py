@@ -132,7 +132,7 @@ class Client:
             max=max,
         )
 
-        users = [User(i) for i in data["data"]]
+        users = [User(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not users:
             raise NoDataFound
