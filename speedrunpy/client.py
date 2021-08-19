@@ -108,6 +108,54 @@ class Client:
 
         return Game(data["data"], http=self._http)
 
+    async def get_derived_games_by_id(
+        self,
+        *,
+        id: str,
+        name: Optional[str] = None,
+        abbreviation: Optional[str] = None,
+        released: Optional[int] = None,
+        gametype: Optional[str] = None,
+        platform: Optional[str] = None,
+        region: Optional[str] = None,
+        genre: Optional[str] = None,
+        engine: Optional[str] = None,
+        developer: Optional[str] = None,
+        publisher: Optional[str] = None,
+        moderator: Optional[str] = None,
+        _bulk: bool = False,
+        offset: Optional[int] = None,
+        max: Optional[int] = None,
+        error_on_empty: bool = True,
+    ):
+        data = await self._http._derived_games(
+            id,
+            name=name,
+            abbreviation=abbreviation,
+            released=released,
+            gametype=gametype,
+            platform=platform,
+            region=region,
+            genre=genre,
+            engine=engine,
+            developer=developer,
+            publisher=publisher,
+            moderator=moderator,
+            _bulk=_bulk,
+            offset=offset,
+            max=max,
+        )
+
+        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
+
+        if error_on_empty and not games:
+            raise NoDataFound
+
+        return Page(
+            page_info=data["pagination"],
+            data=games,
+        )
+
     async def get_users(
         self,
         *,

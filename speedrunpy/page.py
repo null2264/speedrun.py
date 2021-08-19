@@ -49,6 +49,9 @@ class Page(SRCObjectMixin):
         self.size: int = page_info["size"]
         self.data: List[Any] = data
 
+    def __getitem__(self, index: int):
+        return self.data[index]
+
     def __repr__(self) -> str:
         return (
             f"<{self.__class__.__name__} offset={self.offset} "

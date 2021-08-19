@@ -8,7 +8,7 @@ An asynchronous API wrapper for speedrun.com
 |----------------|--------|------------------------------------------|
 | Authentication | ?      |                                          |
 | Categories     | ?      | Class only                               |
-| Games          | ?      | Covered: `GET /games`, `GET /games/{id}` |
+| Games          | ?      | Covered: `GET /games`, `GET /games/{id}`, `GET /games/{id}/derived-games` |
 | Guests         | ?      |                                          |
 | Leaderboards   | ?      |                                          |
 | Levels         | ?      | Class only                               |
