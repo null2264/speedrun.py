@@ -37,6 +37,7 @@ from typing import (
 
 from aiohttp import ClientResponse, ClientSession
 
+from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, FULL_EMBED_LEADERBOARDS
 from .errors import HTTPException
 from .utils import from_json, urlify
 
@@ -57,33 +58,6 @@ async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
         pass
 
     return text
-
-
-EMBED_GAMES = (
-    "levels.variables",
-    "levels.categories.variables",
-    "categories.variables",
-    "moderators",
-    "gametypes",
-    "platforms",
-    "regions",
-    "genres",
-    "engines",
-    "developers",
-    "publishers",
-    "variables",
-)
-
-EMBED_LEADERBOARDS = (
-    "category",
-    "level",
-    "players",
-    "regions",
-    "platforms",
-    "variables",
-)
-
-FULL_EMBED_LEADERBOARDS = ("game",) + EMBED_LEADERBOARDS
 
 
 class Route:
