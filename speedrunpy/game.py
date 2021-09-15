@@ -163,7 +163,7 @@ class Game(SRCObjectMixin):
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = False,
-    ):
+    ) -> Page[Game]:
         """|coro|
 
         Get derived games

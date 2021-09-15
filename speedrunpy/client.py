@@ -69,7 +69,7 @@ class Client:
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = True,
-    ) -> Page:
+    ) -> Page[Game]:
         """|coro|
 
         Get games data
@@ -127,7 +127,7 @@ class Client:
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = True,
-    ):
+    ) -> Page[Game]:
         data = await self._http._derived_games(
             id,
             name=name,
@@ -168,7 +168,7 @@ class Client:
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = True,
-    ) -> Page:
+    ) -> Page[User]:
         data = await self._http._users(
             lookup=lookup,
             name=name,

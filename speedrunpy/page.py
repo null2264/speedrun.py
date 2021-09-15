@@ -23,31 +23,22 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, overload, TYPE_CHECKING
+from typing import Any, Dict, List, overload, TYPE_CHECKING, Generic, TypeVar
 
 from .mixin import SRCObjectMixin
 
-if TYPE_CHECKING:
-    from .game import Game
-    from .user import User
+
+T = TypeVar('T')
 
 
-class Page(SRCObjectMixin):
+class Page(SRCObjectMixin, Generic[T]):
     __slots__ = ("offset", "max", "size", "data")
 
-    @overload
-    def __init__(self, page_info: Dict[str, Any], data: List[Game]) -> None:
-        ...
-
-    @overload
-    def __init__(self, page_info: Dict[str, Any], data: List[User]) -> None:
-        ...
-
-    def __init__(self, page_info: Dict[str, Any], data: List[Any]) -> None:
+    def __init__(self, page_info: Dict[str, Any], data: List[T]) -> None:
         self.offset: int = page_info["offset"]
         self.max: int = page_info["max"]
         self.size: int = page_info["size"]
-        self.data: List[Any] = data
+        self.data: List[T] = data
 
     def __getitem__(self, index: int):
         return self.data[index]
