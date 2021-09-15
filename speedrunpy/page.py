@@ -23,12 +23,12 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, overload, TYPE_CHECKING, Generic, TypeVar
+from typing import Any, Dict, Generic, List, TypeVar
 
 from .mixin import SRCObjectMixin
 
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Page(SRCObjectMixin, Generic[T]):
@@ -40,7 +40,7 @@ class Page(SRCObjectMixin, Generic[T]):
         self.size: int = page_info["size"]
         self.data: List[T] = data
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> T:
         return self.data[index]
 
     def __repr__(self) -> str:
