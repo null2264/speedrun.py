@@ -1,5 +1,7 @@
 # speedrun.py
 
+**WARNING**: This project is still WIP, breaking changes may happens a lot.
+
 An asynchronous API wrapper for speedrun.com
 
 ## Coverage
