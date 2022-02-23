@@ -91,7 +91,11 @@ class HTTPClient:
 
         Must be a coroutine to avoid the deprecation warning of Python 3.9+.
         """
-        return ClientSession(headers={"User-Agent": self.user_agent})
+        headers = {"User-Agent": self.user_agent}
+        if self.token:
+            headers["X-API-Key"] = self.token
+
+        return ClientSession(headers=headers)
 
     async def close(self) -> None:
         """
@@ -325,5 +329,10 @@ class HTTPClient:
             query["max"] = max
 
         route = Route("GET", "/users", **query)
+
+        return self.request(route)
+
+    def _profile(self) -> Response[SpeedrunResponse]:
+        route = Route("GET", "/profile")
 
         return self.request(route)

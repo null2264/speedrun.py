@@ -8,7 +8,7 @@ An asynchronous API wrapper for speedrun.com
 
 | Name           | Status | Comments                                 |
 |----------------|--------|------------------------------------------|
-| Authentication | ?      |                                          |
+| Authentication | ✓      |                                          |
 | Categories     | ?      | Class only                               |
 | Games          | ?      | Covered: `GET /games`, `GET /games/{id}`, `GET /games/{id}/derived-games` |
 | Guests         | ?      |                                          |
@@ -16,7 +16,7 @@ An asynchronous API wrapper for speedrun.com
 | Levels         | ?      | Class only                               |
 | Notifications  | ?      |                                          |
 | Platforms      | ?      |                                          |
-| Profile        | ?      | No auth yet                              |
+| Profile        | ✓      |                                          |
 | Publishers     | ?      |                                          |
 | Regions        | ?      |                                          |
 | Runs           | ?      |                                          |

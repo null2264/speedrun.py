@@ -44,8 +44,11 @@ class Client:
         """
         Wrapper for speedrun.com's API
         """
-        user_agent = user_agent or "speedrun.py/0.0.1"
-        self._http: HTTPClient = HTTPClient(session=session, user_agent=user_agent)
+        self._http: HTTPClient = HTTPClient(
+            session=session,
+            user_agent=user_agent or "speedrun.py/0.0.1",
+            token=token,
+        )
 
     async def close(self) -> None:
         await self._http.close()
@@ -186,3 +189,15 @@ class Client:
             raise NoDataFound
 
         return Page(page_info=data["pagination"], data=users)
+
+    async def get_profile(
+        self,
+        *,
+        error_on_empty: bool = True,
+    ) -> User:
+        data = await self._http._profile()
+
+        if error_on_empty and not data["data"]:
+            raise NoDataFound
+
+        return User(data["data"], http=self._http)
