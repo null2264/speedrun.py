@@ -37,7 +37,7 @@ from typing import (
 
 from aiohttp import ClientResponse, ClientSession
 
-from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, FULL_EMBED_LEADERBOARDS
+from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, FULL_EMBED_LEADERBOARDS, EMBED_RUNS
 from .errors import HTTPException
 from .utils import from_json, urlify
 
@@ -334,6 +334,14 @@ class HTTPClient:
 
     def _user_by_id(self, *, id: str) -> Response[SpeedrunResponse]:
         route = Route("GET", f"/users/{id}")
+
+        return self.request(route)
+
+    def _user_personal_bests(self, *, id: str) -> Response[SpeedrunResponse]:
+        query = {}
+        query["embed"] = ",".join(EMBED_RUNS)
+
+        route = Route("GET", f"/users/{id}/personal-bests", **query)
 
         return self.request(route)
 

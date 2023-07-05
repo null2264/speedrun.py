@@ -145,6 +145,10 @@ class Game(SRCObjectMixin):
             created = zulu_to_utc(self._created)
             return datetime.datetime.fromisoformat(created)
 
+    @property
+    def is_bulk(self) -> bool:
+        return self.released is None
+
     async def get_derived_games(
         self,
         *,

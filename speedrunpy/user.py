@@ -27,10 +27,12 @@ import datetime
 from typing import Any, Dict, Optional
 
 from .asset import Asset
+from .errors import NoDataFound
 from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
 from .utils import zulu_to_utc
+from .run import Run
 
 
 class User(SRCObjectMixin):
@@ -70,3 +72,12 @@ class User(SRCObjectMixin):
     def signup(self) -> datetime.datetime:
         signup = zulu_to_utc(self._signup)
         return datetime.datetime.fromisoformat(signup)
+
+    async def get_personal_bests(self, error_on_empty: bool = False) -> list[Run]:
+        data = await self._http._user_personal_bests(id=self.id)
+        runs: list[Run] = [Run(i, self._http) for i in data["data"] if i]
+
+        if error_on_empty and not runs:
+            raise NoDataFound
+
+        return runs

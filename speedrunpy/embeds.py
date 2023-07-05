@@ -23,3 +23,12 @@ EMBED_LEADERBOARDS = (
 )
 
 FULL_EMBED_LEADERBOARDS = ("game",) + EMBED_LEADERBOARDS
+
+EMBED_RUNS = (
+    "game",
+    "category",
+    "level",
+    "players",
+    "region",
+    "platform",
+)

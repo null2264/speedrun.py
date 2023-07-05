@@ -48,3 +48,6 @@ class Page(SRCObjectMixin, Generic[T]):
             f"<{self.__class__.__name__} offset={self.offset} "
             f"max={self.max} size={self.size} data={self.data!r}>"
         )
+
+    def __bool__(self) -> bool:
+        return bool(self.data)

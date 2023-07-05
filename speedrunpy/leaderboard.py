@@ -28,6 +28,7 @@ from typing import Any, Dict, Union, TYPE_CHECKING, Optional
 from .category import Category
 from .mixin import SRCObjectMixin
 from .http import HTTPClient
+from .run import Run
 
 if TYPE_CHECKING:
     from .game import Game
@@ -36,7 +37,7 @@ if TYPE_CHECKING:
 class Leaderboard(SRCObjectMixin):
 
     def __init__(self, payload: Dict[str, Any], http: Optional[HTTPClient] = None) -> None:
-
+        self._http: HTTPClient = http
         game: Union[str, Dict[str, Any]] = payload["game"]
         if isinstance(game, dict) and http:
             self.game: Union[str, Game] = Game(game["data"], http=http)
@@ -46,4 +47,4 @@ class Leaderboard(SRCObjectMixin):
             self.game = game["data"]["id"]
 
         self.category = Category(payload["categories"]["data"])
-        self.runs = payload["runs"]  # TODO: Make Run class
+        self.runs: list[Run] = [Run(i, http=self._http) for i in payload["runs"]]

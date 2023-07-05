@@ -25,9 +25,22 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
+from .asset import Asset
+from .http import HTTPClient
 
-class SRCObjectMixin:
-    __slots__ = ("links",)
 
-    def __init__(self, payload: Dict[str, Any]) -> None:
+class SRCObjectMixin(object):
+    def __init__(self, payload: Dict[str, Any], *args, **kwargs) -> None:
         self.links: Optional[List[Dict[str, Any]]] = payload.get("links")
+
+
+class SRCObjectWithAssetsMixin(object):
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient, *args, **kwargs) -> None:
+        self._http: HTTPClient = http
+
+        assets: Optional[Dict[str, Any]] = payload.get("assets")
+        self.assets: Dict[str, Asset] = {}
+        if assets:
+            self.assets = {
+                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
+            }
