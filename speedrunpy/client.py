@@ -190,14 +190,26 @@ class Client:
 
         return Page(page_info=data["pagination"], data=users)
 
+    async def get_user_by_id(self, *, id, error_on_empty: bool = True) -> User | None:
+        data = await self._http._user_by_id(id=id)
+
+        if not data["data"]:
+            if error_on_empty:
+                raise NoDataFound
+            return None
+
+        return User(data["data"], http=self._http)
+
     async def get_profile(
         self,
         *,
         error_on_empty: bool = True,
-    ) -> User:
+    ) -> User | None:
         data = await self._http._profile()
 
-        if error_on_empty and not data["data"]:
-            raise NoDataFound
+        if not data["data"]:
+            if error_on_empty:
+                raise NoDataFound
+            return None
 
         return User(data["data"], http=self._http)

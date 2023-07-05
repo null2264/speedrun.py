@@ -332,6 +332,11 @@ class HTTPClient:
 
         return self.request(route)
 
+    def _user_by_id(self, *, id: str) -> Response[SpeedrunResponse]:
+        route = Route("GET", f"/users/{id}")
+
+        return self.request(route)
+
     def _profile(self) -> Response[SpeedrunResponse]:
         route = Route("GET", "/profile")
 
