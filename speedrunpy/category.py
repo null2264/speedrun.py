@@ -41,6 +41,7 @@ class Category(SRCObjectMixin):
         self.rules: str = payload["rules"]
         self.players: Dict[str, Any] = payload["players"]
         self.misc: bool = payload["miscellaneous"]
+        self.variables: list[Dict[str, Any]] = payload["variables"]["data"]
 
     def __str__(self) -> str:
         return self.name
