@@ -57,7 +57,7 @@ class User(SRCObjectMixin):
         self.assets: Optional[Dict[str, Asset]]
         if assets:
             self.assets = {
-                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
+                k: Asset(v, http=self._http) for k, v in assets.items() if v and v["uri"]
             }
 
     def __str__(self) -> Optional[str]:
