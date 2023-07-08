@@ -200,7 +200,9 @@ class Client:
 
         return User(data["data"], http=self._http)
 
-    async def find_user(self, query: str, *, error_on_empty: bool = True) -> User | None:
+    async def find_user(
+        self, query: str, *, error_on_empty: bool = True
+    ) -> User | None:
         try:
             initial_data = await self.get_users(lookup=query)
             return initial_data[0]

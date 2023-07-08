@@ -23,14 +23,14 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from . import game as _game
 from .asset import Asset
 from .category import Category
 from .http import HTTPClient
-from .mixin import SRCObjectMixin, SRCObjectWithAssetsMixin
 from .level import Level
+from .mixin import SRCObjectMixin, SRCObjectWithAssetsMixin
 
 
 if TYPE_CHECKING:

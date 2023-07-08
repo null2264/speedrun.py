@@ -23,20 +23,22 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Union, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from .category import Category
-from .mixin import SRCObjectMixin
 from .http import HTTPClient
+from .mixin import SRCObjectMixin
 from .run import Run
+
 
 if TYPE_CHECKING:
     from .game import Game
 
 
 class Leaderboard(SRCObjectMixin):
-
-    def __init__(self, payload: Dict[str, Any], http: Optional[HTTPClient] = None) -> None:
+    def __init__(
+        self, payload: Dict[str, Any], http: Optional[HTTPClient] = None
+    ) -> None:
         self._http: HTTPClient = http
         game: Union[str, Dict[str, Any]] = payload["game"]
         if isinstance(game, dict) and http:

@@ -37,13 +37,13 @@ from typing import (
 
 from aiohttp import ClientResponse, ClientSession
 
-from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, FULL_EMBED_LEADERBOARDS, EMBED_RUNS
+from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, EMBED_RUNS, FULL_EMBED_LEADERBOARDS
 from .errors import HTTPException
 from .utils import from_json, urlify
 
 
 if TYPE_CHECKING:
-    from .types import SpeedrunResponse, SpeedrunPagedResponse
+    from .types import SpeedrunPagedResponse, SpeedrunResponse
 
     T = TypeVar("T")
     Response = Coroutine[Any, Any, T]
@@ -61,7 +61,6 @@ async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
 
 
 class Route:
-
     BASE_URL: ClassVar[str] = "https://www.speedrun.com/api/v1"
 
     def __init__(self, method: str, path: str, **parameters: Dict[str, Any]) -> None:

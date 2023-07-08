@@ -31,8 +31,8 @@ from .errors import NoDataFound
 from .http import HTTPClient
 from .mixin import SRCObjectMixin
 from .name import Name
-from .utils import zulu_to_utc
 from .run import Run
+from .utils import zulu_to_utc
 
 
 class User(SRCObjectMixin):
@@ -59,7 +59,9 @@ class User(SRCObjectMixin):
         self.assets: Optional[Dict[str, Asset]]
         if assets:
             self.assets = {
-                k: Asset(v, http=self._http) for k, v in assets.items() if v and v["uri"]
+                k: Asset(v, http=self._http)
+                for k, v in assets.items()
+                if v and v["uri"]
             }
 
     def __str__(self) -> Optional[str]:
