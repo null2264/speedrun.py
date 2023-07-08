@@ -23,14 +23,14 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import List, Optional, TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from .category import Category
-from .http import HTTPClient
-from .mixin import SRCObjectMixin
 from .game import Game
-from .run import Run
+from .http import HTTPClient
 from .level import Level
+from .mixin import SRCObjectMixin
+from .run import Run
 from .user import User
 from .variable import Variable
 
