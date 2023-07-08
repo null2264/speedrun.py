@@ -26,21 +26,23 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 from . import game as _game
-from .asset import Asset
 from .category import Category
 from .http import HTTPClient
 from .level import Level
-from .mixin import SRCObjectMixin, SRCObjectWithAssetsMixin
+from .mixin import SRCObjectWithAssetsMixin
 
 
 if TYPE_CHECKING:
     from .game import Game
 
 
-class Run(SRCObjectWithAssetsMixin, SRCObjectMixin):
+class Run(SRCObjectWithAssetsMixin):
+    __slots__ = ("id", "place", "game", "category", "level")
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload=payload, http=http)
+
         self.place: int | None = payload.get("place", None)
+
         run = payload["run"]
         self.id: str = run["id"]
 
@@ -48,7 +50,7 @@ class Run(SRCObjectWithAssetsMixin, SRCObjectMixin):
         game = payload["game"] if self.place is not None else run["game"]
         self.game: Game = _game.Game(game["data"], http=self._http)
 
-        self.category: Category = Category(payload["category"]["data"])
+        self.category: Category = Category(payload["category"]["data"], http=self._http)
 
         # Stupid SR.C, empty level is [], but non-empty level is {}, why?
         level: Optional[Dict[str, Any]] = payload.get("level", {}).get("data")

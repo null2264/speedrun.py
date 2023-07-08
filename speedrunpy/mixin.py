@@ -34,7 +34,7 @@ class SRCObjectMixin(object):
         self.links: Optional[List[Dict[str, Any]]] = payload.get("links")
 
 
-class SRCObjectWithAssetsMixin(object):
+class SRCObjectWithAssetsMixin(SRCObjectMixin):
     def __init__(
         self, payload: Dict[str, Any], http: HTTPClient, *args, **kwargs
     ) -> None:

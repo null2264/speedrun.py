@@ -23,12 +23,12 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from aiohttp import ClientSession
 
 from .errors import NoDataFound
-from .game import Game
+from .game import Game, PartialGame
 from .http import HTTPClient
 from .page import Page
 from .user import User
@@ -72,7 +72,7 @@ class Client:
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = True,
-    ) -> Page[Game]:
+    ) -> Page[Union[PartialGame, Game]]:
         """|coro|
 
         Get games data
@@ -95,7 +95,9 @@ class Client:
             max=max,
         )
 
-        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
+        cls = PartialGame if _bulk else Game
+
+        games: List[cls] = [cls(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
             raise NoDataFound
@@ -130,7 +132,7 @@ class Client:
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = True,
-    ) -> Page[Game]:
+    ) -> Page[Union[PartialGame, Game]]:
         data = await self._http._derived_games(
             id,
             name=name,
@@ -149,7 +151,9 @@ class Client:
             max=max,
         )
 
-        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
+        cls = PartialGame if _bulk else Game
+
+        games: List[cls] = [cls(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
             raise NoDataFound

@@ -289,6 +289,11 @@ class HTTPClient:
     def _game_records(self, game_id):
         pass
 
+    def _category_variables(self, category_id):
+        route = Route("GET", f"/categories/{category_id}/variables")
+
+        return self.request(route)
+
     def _users(
         self,
         *,

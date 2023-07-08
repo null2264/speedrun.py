@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Any, Dict, Optional
+from typing import Any, List, Dict, Optional
 
 from .asset import Asset
 from .errors import NoDataFound
@@ -77,7 +77,7 @@ class User(SRCObjectMixin):
 
     async def get_personal_bests(self, error_on_empty: bool = False) -> list[Run]:
         data = await self._http._user_personal_bests(id=self.id)
-        runs: list[Run] = [Run(i, self._http) for i in data["data"] if i]
+        runs: List[Run] = [Run(i, self._http) for i in data["data"] if i]
 
         if error_on_empty and not runs:
             raise NoDataFound

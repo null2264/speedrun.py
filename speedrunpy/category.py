@@ -23,16 +23,20 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
+from .http import HTTPClient
+from .variable import Variable
 from .mixin import SRCObjectMixin
 
 
 class Category(SRCObjectMixin):
-    __slots__ = ("id", "name", "weblink", "type", "rules", "players", "misc")
+    __slots__ = ("id", "name", "weblink", "type", "rules", "players", "misc", "_variables")
 
-    def __init__(self, payload: Dict[str, Any]) -> None:
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload)
+
+        self._http = http
 
         self.id: str = payload["id"]
         self.name: str = payload["name"]
@@ -41,7 +45,31 @@ class Category(SRCObjectMixin):
         self.rules: str = payload["rules"]
         self.players: Dict[str, Any] = payload["players"]
         self.misc: bool = payload["miscellaneous"]
-        self.variables: list[Dict[str, Any]] = payload["variables"]["data"]
+
+        self._variables: Optional[List[Dict[str, Any]]] = payload.get("variables", {}).get("data")
+        self.__cached_variables: Optional[List[Variable]] = None
+
+    async def fetch_variables(self) -> List[Variable]:
+        data = await self._http._category_variables(self.id)
+        self._variables = data["data"]
+        self.__cached_variables = None
+        return self.variables  # type: ignore
+
+    async def getch_variables(self) -> List[Variable]:
+        rt: Optional[List[Variable]] = self.variables
+        if rt is None:
+            rt = await self.fetch_variables()
+        return rt
+
+    @property
+    def variables(self) -> Optional[List[Variable]]:
+        # FIXME: If I embed "category.variables", sr.c sometime hangs and never send any response.
+        # Hopefully v2 gonna fix this issue.
+        if not self._variables:
+            return None
+        if not self.__cached_variables:
+            self.__cached_variables = [Variable(i) for i in self._variables]
+        return self.__cached_variables
 
     def __str__(self) -> str:
         return self.name

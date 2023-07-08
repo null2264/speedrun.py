@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .asset import Asset
 from .category import Category
@@ -39,30 +39,17 @@ from .utils import zulu_to_utc
 from .variable import Variable
 
 
-class Game(SRCObjectMixin):
+if TYPE_CHECKING:
+    from typing_extensions import Self  # type: ignore - for some reason I still get complain from my text editor
+
+
+class PartialGame(SRCObjectMixin):
     __slots__ = (
         "_http",
         "id",
         "name",
         "abbreviation",
         "weblink",
-        "released",
-        "_release_date",
-        "ruleset",
-        "romhack",
-        "gametypes",
-        "platforms",
-        "regions",
-        "genres",
-        "engines",
-        "developers",
-        "publishers",
-        "moderators",
-        "_created",
-        "assets",
-        "levels",
-        "categories",
-        "variables",
     )
 
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
@@ -76,50 +63,6 @@ class Game(SRCObjectMixin):
         self.abbreviation: str = payload["abbreviation"]
         self.weblink: str = payload["weblink"]
 
-        # Optionals (will always returns None when _bulk mode active)
-        self.released: Optional[int] = payload.get("released")
-        self._release_date: Optional[str] = payload.get("release-date")
-        self.ruleset: Optional[Dict[str, Union[bool, Any]]] = payload.get("ruleset")
-        self.romhack: Optional[bool] = payload.get("romhack")
-        self.gametypes: Optional[Dict[str, Any]] = payload.get("gametypes")
-        self.platforms: Optional[Dict[str, Any]] = payload.get("platforms")
-        self.regions: Optional[Dict[str, Any]] = payload.get("regions")
-        self.genres: Optional[Dict[str, Any]] = payload.get("genres")
-        self.engines: Optional[Dict[str, Any]] = payload.get("engines")
-        self.developers: Optional[Dict[str, Any]] = payload.get("developers")
-        self.publishers: Optional[Dict[str, Any]] = payload.get("publishers")
-
-        moderators: Optional[List[Any]] = payload.get("moderators", dict()).get("data")
-        self.moderators: Optional[List[User]] = None
-        if moderators:
-            # NOTE: This will NOT include moderator's role,
-            # Because mod role is broken (verifier referred as super-mod in the api)
-            self.moderators = [User(i, http=self._http) for i in moderators]
-
-        self._created: Optional[str] = payload.get("created")
-
-        assets: Optional[Dict[str, Any]] = payload.get("assets")
-        self.assets: Optional[Dict[str, Asset]] = None
-        if assets:
-            self.assets = {
-                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
-            }
-
-        levels: Optional[Dict[str, Any]] = payload.get("levels")
-        self.levels: Optional[List[Level]] = None
-        if levels:
-            self.levels = [Level(i) for i in levels["data"]]
-
-        categories: Optional[Dict[str, Any]] = payload.get("categories")
-        self.categories: Optional[List[Category]] = None
-        if categories:
-            self.categories = [Category(i) for i in categories["data"]]
-
-        variables: Optional[Dict[str, Any]] = payload.get("variables")
-        self.variables: Optional[List[Variable]] = None
-        if variables:
-            self.variables = [Variable(i) for i in variables["data"]]
-
     def __str__(self) -> Optional[str]:
         return self.name.international
 
@@ -127,27 +70,14 @@ class Game(SRCObjectMixin):
         return f"<{self.__class__.__name__} id={self.id} name={self.name}>"
 
     def __eq__(self, other: Any) -> bool:
-        return isinstance(other, Game) and self.id == other.id
+        return isinstance(other, PartialGame) and self.id == other.id
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     @property
-    def release_date(self) -> Optional[datetime.datetime]:
-        if self._release_date:
-            return datetime.datetime.fromisoformat(self._release_date).replace(
-                tzinfo=datetime.timezone.utc
-            )
-
-    @property
-    def created(self) -> Optional[datetime.datetime]:
-        if self._created:
-            created = zulu_to_utc(self._created)
-            return datetime.datetime.fromisoformat(created)
-
-    @property
     def is_bulk(self) -> bool:
-        return self.released is None
+        return True
 
     async def get_derived_games(
         self,
@@ -167,7 +97,7 @@ class Game(SRCObjectMixin):
         offset: Optional[int] = None,
         max: Optional[int] = None,
         error_on_empty: bool = False,
-    ) -> Page[Game]:
+    ) -> Page[Self]:
         """|coro|
 
         Get derived games
@@ -190,7 +120,9 @@ class Game(SRCObjectMixin):
             max=max,
         )
 
-        games: List[Game] = [Game(i, http=self._http) for i in data["data"]]
+        cls = PartialGame if _bulk else Game
+
+        games: List[Self] = [cls(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
             raise NoDataFound
@@ -204,3 +136,89 @@ class Game(SRCObjectMixin):
 
     async def get_records(self):
         pass
+
+
+class Game(PartialGame):
+    __slots__ = (
+        "released",
+        "_release_date",
+        "ruleset",
+        "romhack",
+        "gametypes",
+        "platforms",
+        "regions",
+        "genres",
+        "engines",
+        "developers",
+        "publishers",
+        "moderators",
+        "_created",
+        "assets",
+        "levels",
+        "categories",
+        "variables",
+    )
+
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
+        super().__init__(payload, http)
+
+        # Optionals (will always returns None when _bulk mode active)
+        self.released: int = payload["released"]
+        self._release_date: str = payload["release-date"]
+        self.ruleset: Dict[str, Union[bool, Any]] = payload["ruleset"]
+        self.romhack: bool = payload["romhack"]
+        self.gametypes: Dict[str, Any] = payload["gametypes"]
+        self.platforms: Dict[str, Any] = payload["platforms"]
+        self.regions: Dict[str, Any] = payload["regions"]
+        self.genres: Dict[str, Any] = payload["genres"]
+        self.engines: Dict[str, Any] = payload["engines"]
+        self.developers: Dict[str, Any] = payload["developers"]
+        self.publishers: Dict[str, Any] = payload["publishers"]
+
+        moderators: Optional[List[Any]] = payload.get("moderators", dict()).get("data")
+        self.moderators: List[User] = list()
+        if moderators:
+            # NOTE: This will NOT include moderator's role,
+            # Because mod role is broken (verifier referred as super-mod in the api)
+            self.moderators = [User(i, http=self._http) for i in moderators]
+
+        self._created: Optional[str] = payload.get("created")
+
+        assets: Optional[Dict[str, Any]] = payload.get("assets")
+        self.assets: Dict[str, Asset] = dict()
+        if assets:
+            self.assets = {
+                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
+            }
+
+        levels: Optional[Dict[str, Any]] = payload.get("levels")
+        self.levels: List[Level] = list()
+        if levels:
+            self.levels = [Level(i) for i in levels["data"]]
+
+        categories: Optional[Dict[str, Any]] = payload.get("categories")
+        self.categories: List[Category] = list()
+        if categories:
+            self.categories = [Category(i) for i in categories["data"]]
+
+        variables: Optional[Dict[str, Any]] = payload.get("variables")
+        self.variables: List[Variable] = list()
+        if variables:
+            self.variables = [Variable(i) for i in variables["data"]]
+
+    @property
+    def release_date(self) -> Optional[datetime.datetime]:
+        if self._release_date:
+            return datetime.datetime.fromisoformat(self._release_date).replace(
+                tzinfo=datetime.timezone.utc
+            )
+
+    @property
+    def created(self) -> Optional[datetime.datetime]:
+        if self._created:
+            created = zulu_to_utc(self._created)
+            return datetime.datetime.fromisoformat(created)
+
+    @property
+    def is_bulk(self) -> bool:
+        return False
