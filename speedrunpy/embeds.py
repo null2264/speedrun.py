@@ -14,9 +14,9 @@ EMBED_GAMES = (
 )
 
 EMBED_LEADERBOARDS = (
+    "game",
     "category",
     "level",
-    "players",
     "regions",
     "platforms",
     "variables",

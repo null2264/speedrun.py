@@ -23,16 +23,16 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import List, Optional, TYPE_CHECKING, Any, Dict, Union
 
 from .category import Category
 from .http import HTTPClient
 from .mixin import SRCObjectMixin
+from .game import Game
 from .run import Run
-
-
-if TYPE_CHECKING:
-    from .game import Game
+from .level import Level
+from .user import User
+from .variable import Variable
 
 
 class Leaderboard(SRCObjectMixin):
@@ -41,15 +41,23 @@ class Leaderboard(SRCObjectMixin):
         payload: Dict[str, Any],
         http: HTTPClient,
     ) -> None:
+        super().__init__(payload)
         self._http: HTTPClient = http
 
-        game: Union[str, Dict[str, Any]] = payload["game"]
-        if isinstance(game, dict) and http:
-            self.game: Union[str, Game] = Game(game["data"], http=http)
-        elif isinstance(game, str):
-            self.game = game
-        else:
-            self.game = game["data"]["id"]
+        game: Dict[str, Any] = payload["game"]
+        self.game: Union[str, Game] = Game(game["data"], http=self._http)
+        self.runs: List[Run] = [Run(i, http=self._http) for i in payload["runs"]]
+        self.category: Category = Category(payload["category"]["data"], http=self._http)
 
-        self.category = Category(payload["categories"]["data"], http=self._http)
-        self.runs: list[Run] = [Run(i, http=self._http) for i in payload["runs"]]
+        level = payload.get("level")
+        self.level: Optional[Level] = None
+        if level:
+            self.level = Level(payload["level"]["data"], http=self._http)
+
+        regions = payload.get("regions")
+        platforms = payload.get("platforms")
+
+        variables: Optional[Dict[str, Any]] = payload.get("variables")
+        self.variables: List[Variable] = list()
+        if variables:
+            self.variables = [Variable(i) for i in variables["data"]]

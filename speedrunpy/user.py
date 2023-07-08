@@ -34,11 +34,32 @@ from .run import Run
 from .utils import zulu_to_utc
 
 
-class User(SRCObjectWithAssetsMixin):
+class PartialUser:
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
+        self._http: HTTPClient = http
+        self.id: str = payload["id"]
+        self.is_extended = False
+
+    def __str__(self) -> str:
+        return self.id
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__} id={self.id}>"
+
+    async def extend(self) -> User:
+        if self.is_extended:
+            raise RuntimeError("User already extended!")
+
+        data = await self._http._user_by_id(self.id)
+
+        return User(data["data"], http=self._http)
+
+
+class User(PartialUser, SRCObjectWithAssetsMixin):
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload, http)
+        self.is_extended = True
 
-        self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
         self.pronouns: str = payload["pronouns"]
         self.weblink: str = payload["weblink"]
@@ -66,8 +87,8 @@ class User(SRCObjectWithAssetsMixin):
         return datetime.datetime.fromisoformat(signup)
 
     async def get_personal_bests(self, error_on_empty: bool = False) -> List[Run]:
-        data = await self._http._user_personal_bests(id=self.id)
-        runs: List[Run] = [Run(i, self._http) for i in data["data"]]  # type: ignore
+        data: Dict[str, Any] = await self._http._user_personal_bests(id=self.id)  # type: ignore
+        runs: List[Run] = [Run(i, self._http) for i in data["data"]]
 
         if error_on_empty and not runs:
             raise NoDataFound

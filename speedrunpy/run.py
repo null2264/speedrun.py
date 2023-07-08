@@ -23,9 +23,12 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, List, Union
 
-from . import game as _game
+from . import (
+    game as _game,
+    user as _user,
+)
 from .category import Category
 from .http import HTTPClient
 from .level import Level
@@ -34,6 +37,7 @@ from .mixin import SRCObjectWithAssetsMixin
 
 if TYPE_CHECKING:
     from .game import Game
+    from .user import User, PartialUser
 
 
 class Run(SRCObjectWithAssetsMixin):
@@ -53,8 +57,16 @@ class Run(SRCObjectWithAssetsMixin):
 
         self.category: Category = Category(payload["category"]["data"], http=self._http)
 
-        # Stupid SR.C, empty level is [], but non-empty level is {}, why?
+        # Stupid SR.C, empty level is [], but non-empty level is {...}, why?
         level: Optional[Dict[str, Any]] = payload.get("level", {}).get("data")
         self.level: Optional[Level] = None
         if level:
             self.level = Level(level, http=self._http)
+
+        players: Optional[Dict[str, Any]] = payload.get("players")
+        self.players: List[Union[User, PartialUser]] = list()
+        if players:
+            self.players = [_user.User(i, http=self._http) if i.get("name") else _user.PartialUser(i, http=self._http) for i in players["data"]]
+
+        region = payload.get("region")
+        platform = payload.get("platform")

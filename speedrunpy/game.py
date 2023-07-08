@@ -58,6 +58,7 @@ class PartialGame(SRCObjectMixin):
         super().__init__(payload)
 
         self._http = http
+        self.is_bulk = True
 
         # Dataset given in _bulk mode
         self.id: str = payload["id"]
@@ -76,10 +77,6 @@ class PartialGame(SRCObjectMixin):
 
     def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
-
-    @property
-    def is_bulk(self) -> bool:
-        return True
 
     async def get_derived_games(
         self,
@@ -164,7 +161,8 @@ class Game(PartialGame):
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload, http)
 
-        # Optionals (will always returns None when _bulk mode active)
+        self.is_bulk = False
+
         self.released: int = payload["released"]
         self._release_date: str = payload["release-date"]
         self.ruleset: Dict[str, Union[bool, Any]] = payload["ruleset"]
@@ -230,7 +228,3 @@ class Game(PartialGame):
         if self._created:
             created = zulu_to_utc(self._created)
             return datetime.datetime.fromisoformat(created)
-
-    @property
-    def is_bulk(self) -> bool:
-        return False

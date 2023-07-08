@@ -195,7 +195,7 @@ class Client:
         return Page(page_info=data["pagination"], data=users)
 
     async def get_user_by_id(self, *, id, error_on_empty: bool = True) -> User | None:
-        data = await self._http._user_by_id(id=id)
+        data = await self._http._user_by_id(id)
 
         if not data["data"]:
             if error_on_empty:
