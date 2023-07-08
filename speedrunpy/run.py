@@ -61,6 +61,8 @@ class Run(SRCObjectWithAssetsMixin):
         if level:
             self.level = Level(level, http=self._http)
 
+        # FIXME: Player list is flatten in /leaderboards/ when `players` is embedded
+        # REF: https://github.com/speedruncomorg/api/issues/81
         players: Optional[Dict[str, Any]] = payload.get("players")
         self.players: List[Union[User, PartialUser]] = list()
         if players:
