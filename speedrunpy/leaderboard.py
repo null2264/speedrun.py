@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 from .category import Category
 from .http import HTTPClient
@@ -37,9 +37,10 @@ if TYPE_CHECKING:
 
 class Leaderboard(SRCObjectMixin):
     def __init__(
-        self, payload: Dict[str, Any], http: Optional[HTTPClient] = None
+        self, payload: Dict[str, Any], http: HTTPClient,
     ) -> None:
         self._http: HTTPClient = http
+
         game: Union[str, Dict[str, Any]] = payload["game"]
         if isinstance(game, dict) and http:
             self.game: Union[str, Game] = Game(game["data"], http=http)
@@ -48,5 +49,5 @@ class Leaderboard(SRCObjectMixin):
         else:
             self.game = game["data"]["id"]
 
-        self.category = Category(payload["categories"]["data"])
+        self.category = Category(payload["categories"]["data"], http=self._http)
         self.runs: list[Run] = [Run(i, http=self._http) for i in payload["runs"]]

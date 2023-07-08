@@ -56,4 +56,4 @@ class Run(SRCObjectWithAssetsMixin):
         level: Optional[Dict[str, Any]] = payload.get("level", {}).get("data")
         self.level: Optional[Level] = None
         if level:
-            self.level = Level(level)
+            self.level = Level(level, http=self._http)

@@ -178,9 +178,19 @@ class Game(PartialGame):
         moderators: Optional[List[Any]] = payload.get("moderators", dict()).get("data")
         self.moderators: List[User] = list()
         if moderators:
-            # NOTE: This will NOT include moderator's role,
-            # Because mod role is broken (verifier referred as super-mod in the api)
-            self.moderators = [User(i, http=self._http) for i in moderators]
+            # FIXME: Role is broken
+            # - When moderators is embedded, mod role is replaced by site role
+            #   REF: https://github.com/speedruncomorg/api/issues/17
+            # - Even if that's not an issue, verifier role will always be seen as super-mod
+            #   REF: https://github.com/speedruncomorg/api/issues/129
+            #
+            # Until both issue is fixed, I will hardcode role as moderator
+            _m = []
+            for i in moderators:
+                mod = User(i, http=self._http)
+                mod.role = "moderator"
+                _m.append(mod)
+            self.moderators = _m
 
         self._created: Optional[str] = payload.get("created")
 
@@ -194,12 +204,12 @@ class Game(PartialGame):
         levels: Optional[Dict[str, Any]] = payload.get("levels")
         self.levels: List[Level] = list()
         if levels:
-            self.levels = [Level(i) for i in levels["data"]]
+            self.levels = [Level(i, http=self._http) for i in levels["data"]]
 
         categories: Optional[Dict[str, Any]] = payload.get("categories")
         self.categories: List[Category] = list()
         if categories:
-            self.categories = [Category(i) for i in categories["data"]]
+            self.categories = [Category(i, http=self._http) for i in categories["data"]]
 
         variables: Optional[Dict[str, Any]] = payload.get("variables")
         self.variables: List[Variable] = list()

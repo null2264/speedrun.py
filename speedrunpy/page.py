@@ -35,6 +35,8 @@ class Page(SRCObjectMixin, Generic[T]):
     __slots__ = ("offset", "max", "size", "data")
 
     def __init__(self, page_info: Dict[str, Any], data: List[T]) -> None:
+        super().__init__(page_info)
+
         self.offset: int = page_info["offset"]
         self.max: int = page_info["max"]
         self.size: int = page_info["size"]

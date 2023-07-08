@@ -26,13 +26,16 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from .category import Category
+from .http import HTTPClient
 from .mixin import SRCObjectMixin
 
 
 class Level(SRCObjectMixin):
     __slots__ = ("id", "name", "weblink", "rules", "categories")
 
-    def __init__(self, payload: Dict[str, Any]) -> None:
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
+        self._http = http
+
         self.id: str = payload["id"]
         self.name: str = payload["name"]
         self.weblink: str = payload["weblink"]
@@ -41,7 +44,7 @@ class Level(SRCObjectMixin):
         categories: Optional[Dict] = payload.get("categories")
         self.categories: Optional[List[Category]] = None
         if categories:
-            self.categories = [Category(i) for i in categories["data"]]
+            self.categories = [Category(i, http=self._http) for i in categories["data"]]
 
     def __str__(self) -> str:
         return self.name

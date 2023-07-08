@@ -26,18 +26,17 @@ from __future__ import annotations
 import datetime
 from typing import Any, List, Dict, Optional
 
-from .asset import Asset
 from .errors import NoDataFound
 from .http import HTTPClient
-from .mixin import SRCObjectMixin
+from .mixin import SRCObjectWithAssetsMixin
 from .name import Name
 from .run import Run
 from .utils import zulu_to_utc
 
 
-class User(SRCObjectMixin):
+class User(SRCObjectWithAssetsMixin):
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
-        self._http = http
+        super().__init__(payload, http)
 
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
@@ -55,15 +54,6 @@ class User(SRCObjectMixin):
             "uri", None
         )
 
-        assets: Optional[Dict[str, Any]] = payload.get("assets")
-        self.assets: Optional[Dict[str, Asset]]
-        if assets:
-            self.assets = {
-                k: Asset(v, http=self._http)
-                for k, v in assets.items()
-                if v and v["uri"]
-            }
-
     def __str__(self) -> Optional[str]:
         return self.name.international
 
@@ -75,9 +65,9 @@ class User(SRCObjectMixin):
         signup = zulu_to_utc(self._signup)
         return datetime.datetime.fromisoformat(signup)
 
-    async def get_personal_bests(self, error_on_empty: bool = False) -> list[Run]:
+    async def get_personal_bests(self, error_on_empty: bool = False) -> List[Run]:
         data = await self._http._user_personal_bests(id=self.id)
-        runs: List[Run] = [Run(i, self._http) for i in data["data"] if i]
+        runs: List[Run] = [Run(i, self._http) for i in data["data"]]  # type: ignore
 
         if error_on_empty and not runs:
             raise NoDataFound
