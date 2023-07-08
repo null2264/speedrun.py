@@ -40,7 +40,7 @@ class User(SRCObjectWithAssetsMixin):
 
         self.id: str = payload["id"]
         self.name: Name = Name(payload["names"])
-        self.pronouns: Optional[str] = payload["pronouns"]
+        self.pronouns: str = payload["pronouns"]
         self.weblink: str = payload["weblink"]
         self.name_style: Dict[str, Any] = payload["name-style"]
         self.role: str = payload["role"]
