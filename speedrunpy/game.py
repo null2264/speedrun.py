@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from .asset import Asset
 from .category import Category
@@ -40,7 +40,9 @@ from .variable import Variable
 
 
 if TYPE_CHECKING:
-    from typing_extensions import Self  # type: ignore - for some reason I still get complain from my text editor
+    from typing_extensions import (
+        Self,  # type: ignore - for some reason I still get complain from my text editor
+    )
 
 
 class PartialGame(SRCObjectMixin):

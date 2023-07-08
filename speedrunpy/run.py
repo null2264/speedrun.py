@@ -38,6 +38,7 @@ if TYPE_CHECKING:
 
 class Run(SRCObjectWithAssetsMixin):
     __slots__ = ("id", "place", "game", "category", "level")
+
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload=payload, http=http)
 

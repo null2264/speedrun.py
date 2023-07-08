@@ -37,7 +37,9 @@ if TYPE_CHECKING:
 
 class Leaderboard(SRCObjectMixin):
     def __init__(
-        self, payload: Dict[str, Any], http: HTTPClient,
+        self,
+        payload: Dict[str, Any],
+        http: HTTPClient,
     ) -> None:
         self._http: HTTPClient = http
 

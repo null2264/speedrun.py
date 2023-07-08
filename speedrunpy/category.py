@@ -26,12 +26,21 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from .http import HTTPClient
-from .variable import Variable
 from .mixin import SRCObjectMixin
+from .variable import Variable
 
 
 class Category(SRCObjectMixin):
-    __slots__ = ("id", "name", "weblink", "type", "rules", "players", "misc", "_variables")
+    __slots__ = (
+        "id",
+        "name",
+        "weblink",
+        "type",
+        "rules",
+        "players",
+        "misc",
+        "_variables",
+    )
 
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         super().__init__(payload)
@@ -46,7 +55,9 @@ class Category(SRCObjectMixin):
         self.players: Dict[str, Any] = payload["players"]
         self.misc: bool = payload["miscellaneous"]
 
-        self._variables: Optional[List[Dict[str, Any]]] = payload.get("variables", {}).get("data")
+        self._variables: Optional[List[Dict[str, Any]]] = payload.get(
+            "variables", {}
+        ).get("data")
         self.__cached_variables: Optional[List[Variable]] = None
 
     async def fetch_variables(self) -> List[Variable]:

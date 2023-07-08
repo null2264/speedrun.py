@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Any, List, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from .errors import NoDataFound
 from .http import HTTPClient
