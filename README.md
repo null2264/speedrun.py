@@ -8,20 +8,20 @@ An asynchronous API wrapper for speedrun.com
 
 ## Coverage
 
-| Name           | Status | Comments                                 |
-|----------------|--------|------------------------------------------|
-| Authentication | ✓      |                                          |
+| Name           | Status  | Comments                                 |
+|----------------|---------|------------------------------------------|
+| Authentication | ✓       |                                          |
 | Categories     | ？      | Class only                               |
-| Games          | ？      | Covered: `GET /games`, `GET /games/{id}`, `GET /games/{id}/derived-games` |
+| Games          | ？      | `GET /games`, `GET /games/{id}`, `GET /games/{id}/derived-games` |
 | Guests         | ？      |                                          |
-| Leaderboards   | ？      |                                          |
+| Leaderboards   | ？      | Class only                               |
 | Levels         | ？      | Class only                               |
 | Notifications  | ？      |                                          |
 | Platforms      | ？      |                                          |
-| Profile        | ✓      |                                          |
+| Profile        | ✓       |                                          |
 | Publishers     | ？      |                                          |
 | Regions        | ？      |                                          |
-| Runs           | ？      |                                          |
+| Runs           | ？      | `GET /runs`, `GET /runs/{id}`            |
 | Series         | ？      |                                          |
 | Users          | ？      | TODO: check the coverage                 |
 | Variables      | ？      | Class only                               |

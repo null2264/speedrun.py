@@ -339,8 +339,9 @@ class HTTPClient:
 
         return self.request(route)
 
-    def _user_personal_bests(self, *, id: str) -> Response[SpeedrunResponse]:
+    def _user_personal_bests(self, id: str) -> Response[SpeedrunResponse]:
         query = {}
+
         query["embed"] = ",".join(EMBED_RUNS)
 
         route = Route("GET", f"/users/{id}/personal-bests", **query)
@@ -349,5 +350,62 @@ class HTTPClient:
 
     def _profile(self) -> Response[SpeedrunResponse]:
         route = Route("GET", "/profile")
+
+        return self.request(route)
+
+    def _runs(
+        self,
+        *,
+        user: Optional[str],
+        guest: Optional[str],
+        examiner: Optional[str],
+        game: Optional[str],
+        level: Optional[str],
+        category: Optional[str],
+        region: Optional[str],
+        emulated: Optional[bool],
+        status: Optional[str],
+    ) -> Response[SpeedrunPagedResponse]:
+        query = {}
+
+        if user:
+            query["user"] = user
+
+        if guest:
+            query["guest"] = guest
+
+        if examiner:
+            query["examiner"] = examiner
+
+        if game:
+            query["game"] = game
+
+        if level:
+            query["level"] = level
+
+        if category:
+            query["category"] = category
+
+        if region:
+            query["region"] = region
+
+        if emulated is not None:
+            query["emulated"] = int(emulated)
+
+        if status:
+            query["status"] = status
+
+        query["embed"] = ",".join(EMBED_RUNS)
+
+        route = Route("GET", "/runs", **query)
+
+        return self.request(route)
+
+    def _run_by_id(self, id: str) -> Response[SpeedrunResponse]:
+        query = {}
+
+        query["embed"] = ",".join(EMBED_RUNS)
+
+        route = Route("GET", f"/runs{id}", **query)
 
         return self.request(route)

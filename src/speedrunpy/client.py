@@ -31,6 +31,7 @@ from .errors import NoDataFound
 from .game import Game, PartialGame
 from .http import HTTPClient
 from .page import Page
+from .run import Run
 from .user import User
 
 
@@ -194,7 +195,7 @@ class Client:
 
         return Page(page_info=data["pagination"], data=users)
 
-    async def get_user_by_id(self, *, id, error_on_empty: bool = True) -> User | None:
+    async def get_user_by_id(self, *, id, error_on_empty: bool = True) -> Union[User, None]:
         data = await self._http._user_by_id(id)
 
         if not data["data"]:
@@ -204,7 +205,7 @@ class Client:
 
         return User(data["data"], http=self._http)
 
-    async def find_user(self, query: str, *, error_on_empty: bool = True) -> User | None:
+    async def find_user(self, query: str, *, error_on_empty: bool = True) -> Union[User, None]:
         try:
             initial_data = await self.get_users(lookup=query)
             return initial_data[0]
@@ -224,3 +225,51 @@ class Client:
             return None
 
         return User(data["data"], http=self._http)
+
+    async def get_runs(
+        self,
+        *,
+        user: Optional[str] = None,
+        guest: Optional[str] = None,
+        examiner: Optional[str] = None,
+        game: Optional[str] = None,
+        level: Optional[str] = None,
+        category: Optional[str] = None,
+        region: Optional[str] = None,
+        emulated: Optional[bool] = None,
+        status: Optional[str] = None,
+        error_on_empty: bool = True,
+    ) -> Page[Run]:
+        data = await self._http._runs(
+            user=user,
+            guest=guest,
+            examiner=examiner,
+            game=game,
+            level=level,
+            category=category,
+            region=region,
+            emulated=emulated,
+            status=status,
+        )
+
+        runs = [Run(i, http=self._http) for i in data["data"]]
+
+        if error_on_empty and not runs:
+            raise NoDataFound
+
+        return Page(page_info=data["pagination"], data=runs)
+
+    async def get_run_by_id(
+        self,
+        *,
+        id: str,
+        error_on_empty: bool = True,
+    ) -> Union[Run, None]:
+        data = await self._http._run_by_id(id)
+
+        if not data["data"]:
+            if error_on_empty:
+                raise NoDataFound
+            return None
+
+        return Run(data["data"], http=self._http)
