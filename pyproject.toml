@@ -1,35 +1,38 @@
-[tool.poetry]
+[project]
 name = "speedrun.py"
-version = "21.8.2a"
-description = "An asynchronous API wrapper for speedrun.com"
-authors = ["null2264"]
-
-license = "MIT"
-
-readme = "README.md"
-
-packages = [
-    { include = "speedrunpy" },
+version = "1.0.0"
+description = "An asynchronous API wrapper for speedun.com v1"
+authors = [
+    { name="null2264", email="palembani@gmail.com" }
+]
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+dependencies = [
+    "aiohttp>=3.6.2",
+    "typing-extensions>=4.7.1"
 ]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-aiohttp = "^3.6.2"
-typing-extensions = "^4.7.1"
+[tool.pdm.build]
+excludes = ["./**/.git"]
+package-dir = "src"
+includes = ["src/speedrunpy"]
+source-includes = ["tests", "CHANGELOG.md", "LICENSE", "README.md"]
+# editables backend doesn't work well with namespace packages
+editable-backend = "path"
 
-[tool.poetry.dev-dependencies]
-black = "^21.7b0"
-isort = "^5.9.3"
-pyproject-flake8 = "^0.0.1-alpha.2"
+[tool.pdm.dev-dependencies]
+lint = [
+    "black>=21.7b0",
+    "isort>=5.9.3"
+]
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
 
-[tool.flake8]
-max-line-length = 88
-select = "C,E,F,W,B,B950"
-extend-ignore = "E203,E501"
+[tool.black]
+line-length = 120
+target-version = ["py37", "py38", "py39", "py310"]
 
 [tool.isort]
 profile = "black"
