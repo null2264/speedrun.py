@@ -23,6 +23,9 @@ SOFTWARE.
 """
 
 
+from typing import Optional
+
+
 class HTTPException(Exception):
     def __init__(self) -> None:
         super().__init__("Failed to get data from speedrun.com")
@@ -35,12 +38,10 @@ class SpeedrunException(Exception):
 
 
 class NoDataFound(SpeedrunException):
-    def __init__(self, message: str = None) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         super().__init__(message or "No data found!")
 
 
 class AuthenticationRequired(SpeedrunException):
-    def __init__(self, message: str = None) -> None:
-        super().__init__(
-            message or "This method requires you to be authenticated to the API."
-        )
+    def __init__(self, message: Optional[str] = None) -> None:
+        super().__init__(message or "This method requires you to be authenticated to the API.")

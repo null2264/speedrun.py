@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, Generic, List, TypeVar
+from typing import Dict, Generic, List, TypeVar
 
 from .mixin import SRCObjectMixin
 
@@ -34,7 +34,7 @@ T = TypeVar("T")
 class Page(SRCObjectMixin, Generic[T]):
     __slots__ = ("offset", "max", "size", "data")
 
-    def __init__(self, page_info: Dict[str, Any], data: List[T]) -> None:
+    def __init__(self, page_info: Dict[str, int], data: List[T]) -> None:
         super().__init__(page_info)
 
         self.offset: int = page_info["offset"]
@@ -47,8 +47,7 @@ class Page(SRCObjectMixin, Generic[T]):
 
     def __repr__(self) -> str:
         return (
-            f"<{self.__class__.__name__} offset={self.offset} "
-            f"max={self.max} size={self.size} data={self.data!r}>"
+            f"<{self.__class__.__name__} offset={self.offset} " f"max={self.max} size={self.size} data={self.data!r}>"
         )
 
     def __bool__(self) -> bool:

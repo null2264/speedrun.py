@@ -97,7 +97,7 @@ class Client:
 
         cls = PartialGame if _bulk else Game
 
-        games: List[cls] = [cls(i, http=self._http) for i in data["data"]]
+        games: List[PartialGame] = [cls(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
             raise NoDataFound
@@ -153,7 +153,7 @@ class Client:
 
         cls = PartialGame if _bulk else Game
 
-        games: List[cls] = [cls(i, http=self._http) for i in data["data"]]
+        games: List[PartialGame] = [cls(i, http=self._http) for i in data["data"]]
 
         if error_on_empty and not games:
             raise NoDataFound
@@ -204,9 +204,7 @@ class Client:
 
         return User(data["data"], http=self._http)
 
-    async def find_user(
-        self, query: str, *, error_on_empty: bool = True
-    ) -> User | None:
+    async def find_user(self, query: str, *, error_on_empty: bool = True) -> User | None:
         try:
             initial_data = await self.get_users(lookup=query)
             return initial_data[0]

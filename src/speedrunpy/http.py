@@ -112,9 +112,7 @@ class HTTPClient:
             self._session = await self._generate_session()
 
         for tries in range(5):
-            async with self._session.request(
-                route.method, route.url, **kwargs
-            ) as response:
+            async with self._session.request(route.method, route.url, **kwargs) as response:
                 data = await json_or_text(response)
 
                 if 300 > response.status >= 200:
@@ -209,7 +207,7 @@ class HTTPClient:
         return self.request(route)
 
     def _game_by_id(self, *, id: str) -> Response[SpeedrunResponse]:
-        query = {"embed": ",".join(EMBED_GAMES)}
+        query: Dict[str, Any] = {"embed": ",".join(EMBED_GAMES)}
 
         route = Route("GET", f"/games/{id}", **query)
 
