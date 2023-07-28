@@ -1,6 +1,6 @@
 [project]
 name = "speedrun.py"
-version = "1.0.0"
+version = "23.7a0"
 description = "An asynchronous API wrapper for speedun.com v1"
 authors = [
     { name="null2264", email="palembani@gmail.com" }
