@@ -13,7 +13,7 @@ An asynchronous API wrapper for speedrun.com
 | Authentication | ✓       |                                          |
 | Categories     | ？      | Class only                               |
 | Games          | ？      | `GET /games`, `GET /games/{id}`, `GET /games/{id}/derived-games` |
-| Guests         | ？      |                                          |
+| Guests         | ？      | Class only                               |
 | Leaderboards   | ？      | Class only                               |
 | Levels         | ？      | Class only                               |
 | Notifications  | ？      |                                          |

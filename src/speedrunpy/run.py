@@ -25,9 +25,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
+from speedrunpy.guest import Guest
+
 from . import game as _game
 from . import user as _user
 from .category import Category
+from .guest import Guest
 from .http import HTTPClient
 from .level import Level
 from .mixin import SRCObjectWithAssetsMixin
@@ -46,7 +49,11 @@ class Run(SRCObjectWithAssetsMixin):
 
         self.place: int | None = payload.get("place", None)
 
-        run = payload["run"]
+        try:
+            run = payload["run"]
+        except:
+            run = payload
+
         self.id: str = run["id"]
 
         # embeds
@@ -64,14 +71,16 @@ class Run(SRCObjectWithAssetsMixin):
         # FIXME: Player list is flatten in /leaderboards/ when `players` is embedded
         # REF: https://github.com/speedruncomorg/api/issues/81
         players: Optional[Dict[str, Any]] = payload.get("players")
-        self.players: List[Union[User, PartialUser]] = list()
+        self.players: List[Union[User, PartialUser, Guest]] = list()
         if players:
-            self.players = [
-                _user.User(i, http=self._http)
-                if i.get("name")
-                else _user.PartialUser(i, http=self._http)
-                for i in players["data"]
-            ]
+            for i in players["data"]:
+                if i["rel"] == "guest":
+                    self.players.append(Guest(i))
+                    continue
+
+                self.players.append(
+                    _user.User(i, http=self._http) if i.get("name") else _user.PartialUser(i, http=self._http)
+                )
 
         region = payload.get("region")
         platform = payload.get("platform")
