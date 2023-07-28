@@ -406,6 +406,6 @@ class HTTPClient:
 
         query["embed"] = ",".join(EMBED_RUNS)
 
-        route = Route("GET", f"/runs{id}", **query)
+        route = Route("GET", f"/runs/{id}", **query)
 
         return self.request(route)
