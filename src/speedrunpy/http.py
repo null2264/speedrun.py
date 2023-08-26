@@ -66,10 +66,14 @@ class Route:
     def __init__(self, method: str, path: str, **parameters: Dict[str, Any]) -> None:
         self.method: str = method
         self.path: str = path
+        self.parameters: Dict[str, Any] = parameters
+
+    @property
+    def url(self) -> str:
         url = self.BASE_URL + self.path
-        if parameters:
-            url += urlify(**parameters)
-        self.url: str = url
+        if self.parameters:
+            url += urlify(**self.parameters)
+        return url
 
 
 class HTTPClient:
