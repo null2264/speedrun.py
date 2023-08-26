@@ -8,6 +8,8 @@ An asynchronous API wrapper for speedrun.com
 
 ## Coverage
 
+### V1
+
 | Name           | Status  | Comments                                 |
 |----------------|---------|------------------------------------------|
 | Authentication | ✓       |                                          |
@@ -25,3 +27,40 @@ An asynchronous API wrapper for speedrun.com
 | Series         | ？      |                                          |
 | Users          | ？      | TODO: check the coverage                 |
 | Variables      | ？      | Class only                               |
+
+### V2
+
+As of writing this (2023-08-26), V2 is undocumented, may break at anytime.
+
+| Function                | Status | Comments                         |
+|-------------------------|--------|----------------------------------|
+| GetSearch               | ？     |                                  |
+| GetCommentList          | ？     |                                  |
+| PutAuthSignup           | ？     |                                  |
+| PutGameBoostGrant       | ？     |                                  |
+| GetGameData             | ？     |                                  |
+| GetConversations        | ？     |                                  |
+| GetNotifications        | ？     |                                  |
+| GetModerationGames      | ？     |                                  |
+| GetSession              | ？     |                                  |
+| GetGameSettings         | ？     |                                  |
+| PutGameSettings         | ？     |                                  |
+| GetThemeSettings        | ？     |                                  |
+| GetAuditLogList         | ？     |                                  |
+| GetModerationRuns       | ？     |                                  |
+| PutSessionPing          | ？     |                                  |
+| GetGameLeaderboard2     | ？     |                                  |
+| GetGameRecordHistory    | ？     |                                  |
+| GetConversationMessages | ？     |                                  |
+| GetForumList            | ？     |                                  |
+| GetForumReadStatus      | ？     |                                  |
+| GetThreadReadStatus     | ？     |                                  |
+| GetCommentable          | ？     |                                  |
+| PutThreadRead           | ？     |                                  |
+| GetThread               | ？     |                                  |
+| GetUserBlocks           | ？     |                                  |
+
+#### Useful Links
+
+- [V2 Unofficial Docs](https://github.com/ManicJamie/speedruncom-apiv2-docs) by [@ManicJamie](https://github.com/ManicJamie)
+- [V2 Deno API wrapper and Documentation](https://git.sr.ht/~aninternettroll/speedruncomapiv2) by [@aninternettroll@git.sr.ht](https://git.sr.ht/~aninternettroll)
