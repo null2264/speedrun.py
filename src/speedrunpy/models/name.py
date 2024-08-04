@@ -39,9 +39,9 @@ class Name:
     @classmethod
     def from_payload(cls, payload: Dict[str, Any]) -> Name:
         return Name(
-            international=payload.get("international", "null"),
-            japanese=payload.get("japanese"),
-            twitch=payload.get("twitch"),
+            international=payload["names"].get("international", "null"),
+            japanese=payload["names"].get("japanese"),
+            twitch=payload["names"].get("twitch"),
         )
 
     def __str__(self) -> str:

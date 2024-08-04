@@ -40,7 +40,7 @@ class PartialUser:
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         self._http: HTTPClient = http
         self._api_version: int = 2 if payload.get("user") else 1
-        self.id: str = payload.get("id", payload["user"]["id"])
+        self.id: str = payload["id"] if self._api_version == 1 else payload["user"]["id"]
         self.is_extended = False
 
     def __str__(self) -> str:
@@ -93,7 +93,8 @@ class User(PartialUser, SRCObjectWithAssetsMixin):
 
     def __populate_v1(self, payload: Dict[str, Any]) -> None:
         self.name: Name = Name.from_payload(payload)
-        self.pronouns: List[str] = payload["pronouns"].split(", ")
+        pronouns: str = payload["pronouns"] or ""
+        self.pronouns: List[str] = pronouns.split(", ")
         self.weblink: str = payload["weblink"]
         self.name_style: Dict[str, Any] = payload["name-style"]
         self.role: str = payload["role"]
