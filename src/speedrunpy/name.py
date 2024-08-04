@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional
@@ -38,6 +39,4 @@ class Name:
         return self.international or self.twitch or self.japanese
 
     def __repr__(self) -> str:
-        return "<Names international={0.international} japanese={0.japanese} twitch={0.twitch}>".format(
-            self
-        )
+        return "<Names international={0.international} japanese={0.japanese} twitch={0.twitch}>".format(self)

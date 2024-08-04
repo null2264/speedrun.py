@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 from functools import wraps
@@ -50,13 +51,7 @@ except ImportError:
 
 
 def urlify(**kwargs) -> str:
-    return "?" + "&".join(
-        [
-            f"{k}={str(v).replace(' ', '%20')}"
-            for k, v in kwargs.items()
-            if v is not None
-        ]
-    )
+    return "?" + "&".join([f"{k}={str(v).replace(' ', '%20')}" for k, v in kwargs.items() if v is not None])
 
 
 def zulu_to_utc(iso_datetime: str) -> str:
@@ -72,7 +67,7 @@ def to_json(obj: Any) -> Union[str, bytes]:
 
 
 def require_authentication(
-    func: Callable[Concatenate[C, B], T]
+    func: Callable[Concatenate[C, B], T],
 ) -> Callable[Concatenate[C, B], T]:
     @wraps(func)
     def wrapper(client: C, *args: B.args, **kwargs: B.kwargs) -> T:

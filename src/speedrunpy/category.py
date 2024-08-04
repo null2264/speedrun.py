@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
@@ -55,9 +56,7 @@ class Category(SRCObjectMixin):
         self.players: Dict[str, Any] = payload["players"]
         self.misc: bool = payload["miscellaneous"]
 
-        self._variables: Optional[List[Dict[str, Any]]] = payload.get(
-            "variables", {}
-        ).get("data")
+        self._variables: Optional[List[Dict[str, Any]]] = payload.get("variables", {}).get("data")
         self.__cached_variables: Optional[List[Variable]] = None
 
     async def fetch_variables(self) -> List[Variable]:
@@ -86,7 +85,4 @@ class Category(SRCObjectMixin):
         return self.name
 
     def __repr__(self) -> str:
-        return (
-            f"<{self.__class__.__name__} id={self.id} "
-            f"name={self.name} type={self.type}>"
-        )
+        return f"<{self.__class__.__name__} id={self.id} " f"name={self.name} type={self.type}>"

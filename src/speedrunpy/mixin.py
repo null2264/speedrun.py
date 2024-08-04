@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
@@ -35,14 +36,10 @@ class SRCObjectMixin(object):
 
 
 class SRCObjectWithAssetsMixin(SRCObjectMixin):
-    def __init__(
-        self, payload: Dict[str, Any], http: HTTPClient, *args, **kwargs
-    ) -> None:
+    def __init__(self, payload: Dict[str, Any], http: HTTPClient, *args, **kwargs) -> None:
         self._http: HTTPClient = http
 
         assets: Optional[Dict[str, Any]] = payload.get("assets")
         self.assets: Dict[str, Asset] = {}
         if assets:
-            self.assets = {
-                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
-            }
+            self.assets = {k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]}

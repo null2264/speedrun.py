@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-
 __title__ = "speedrun.py"
 __author__ = "null2264"
 __license__ = "MIT"
@@ -50,6 +49,4 @@ class VersionInfo(NamedTuple):
     releaselevel: Literal["alpha", "beta", "candidate", "final"]
 
 
-version_info: VersionInfo = VersionInfo(
-    year=21, month=8, update=2, releaselevel="alpha"
-)
+version_info: VersionInfo = VersionInfo(year=21, month=8, update=2, releaselevel="alpha")

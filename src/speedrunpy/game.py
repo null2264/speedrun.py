@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -197,9 +198,7 @@ class Game(PartialGame):
         assets: Optional[Dict[str, Any]] = payload.get("assets")
         self.assets: Dict[str, Asset] = dict()
         if assets:
-            self.assets = {
-                k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]
-            }
+            self.assets = {k: Asset(v, http=self._http) for k, v in assets.items() if v["uri"]}
 
         levels: Optional[Dict[str, Any]] = payload.get("levels")
         self.levels: List[Level] = list()
@@ -219,9 +218,7 @@ class Game(PartialGame):
     @property
     def release_date(self) -> Optional[datetime.datetime]:
         if self._release_date:
-            return datetime.datetime.fromisoformat(self._release_date).replace(
-                tzinfo=datetime.timezone.utc
-            )
+            return datetime.datetime.fromisoformat(self._release_date).replace(tzinfo=datetime.timezone.utc)
 
     @property
     def created(self) -> Optional[datetime.datetime]:

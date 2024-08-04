@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 import datetime
@@ -71,9 +72,7 @@ class User(PartialUser, SRCObjectWithAssetsMixin):
         self.hitbox: Optional[str] = (payload["hitbox"] or {}).get("uri", None)
         self.youtube: Optional[str] = (payload["youtube"] or {}).get("uri", None)
         self.twitter: Optional[str] = (payload["twitter"] or {}).get("uri", None)
-        self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get(
-            "uri", None
-        )
+        self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get("uri", None)
 
     def __str__(self) -> Optional[str]:
         return self.name.international
