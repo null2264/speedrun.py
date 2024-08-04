@@ -21,9 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 import asyncio
+import sys
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -35,8 +37,10 @@ from typing import (
     Union,
 )
 
+import aiohttp
 from aiohttp import ClientResponse, ClientSession
 
+from . import __version__
 from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, EMBED_RUNS, FULL_EMBED_LEADERBOARDS
 from .errors import HTTPException
 from .utils import from_json, urlify
@@ -80,14 +84,15 @@ class HTTPClient:
     def __init__(
         self,
         *,
-        user_agent: str,
+        user_agent: Optional[str],
         token: Optional[str] = None,
         session: Optional[ClientSession] = None,
     ):
         self.token: Optional[str] = token
         self._authenticated: bool = self.token is not None
         self._session: Optional[ClientSession] = session
-        self.user_agent: str = user_agent
+        _user_agent = "speedrun.py (https://github.com/null2264/speedrun.py {0}) Python/{1[0]}.{1[1]} aiohttp/{2}"
+        self.user_agent: str = user_agent or _user_agent.format(__version__, sys.version_info, aiohttp.__version__)
 
     async def _generate_session(self) -> ClientSession:
         """|coro|

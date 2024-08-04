@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+
 from __future__ import annotations
 
 from typing import List, Optional, Union
@@ -47,7 +48,7 @@ class Client:
         """
         self._http: HTTPClient = HTTPClient(
             session=session,
-            user_agent=user_agent or "speedrun.py/0.0.1",
+            user_agent=user_agent,
             token=token,
         )
 
