@@ -30,13 +30,22 @@ from typing import Any, Dict, Optional
 class Name:
     __slots__ = ("international", "japanese", "twitch")
 
-    def __init__(self, payload: Dict[str, Any]) -> None:
-        self.international: Optional[str] = payload.get("international")
-        self.japanese: Optional[str] = payload.get("japanese")
-        self.twitch: Optional[str] = payload.get("twitch")
+    def __init__(self, international: str, japanese: Optional[str] = None, twitch: Optional[str] = None) -> None:
+        self.international: str = international
+        # Legacy
+        self.japanese: Optional[str] = japanese
+        self.twitch: Optional[str] = twitch
+
+    @classmethod
+    def from_payload(cls, payload: Dict[str, Any]) -> Name:
+        return Name(
+            international=payload.get("international", "null"),
+            japanese=payload.get("japanese"),
+            twitch=payload.get("twitch"),
+        )
 
     def __str__(self) -> str:
-        return self.international or self.twitch or self.japanese or "null"
+        return self.japanese or self.twitch or self.international
 
     def __repr__(self) -> str:
         return "<Names international={0.international} japanese={0.japanese} twitch={0.twitch}>".format(self)

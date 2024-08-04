@@ -47,7 +47,7 @@ from .utils import from_json, urlify
 
 
 if TYPE_CHECKING:
-    from .models.types import SpeedrunPagedResponse, SpeedrunResponse
+    from .models.types import SpeedrunPagedResponse, SpeedrunResponse, GetUserSummaryResponse
 
     T = TypeVar("T")
     Response = Coroutine[Any, Any, T]
@@ -346,6 +346,15 @@ class HTTPClient:
 
     def _user_by_id(self, id: str) -> Response[SpeedrunResponse]:
         route = Route("GET", 1, f"/users/{id}")
+
+        return self.request(route)
+
+    def _get_user_summary(self, url: str) -> Response[GetUserSummaryResponse]:
+        query = {}
+
+        query["url"] = url
+
+        route = Route("GET", 2, "/GetUserSummary", **query)
 
         return self.request(route)
 

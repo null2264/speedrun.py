@@ -28,7 +28,7 @@ from typing import List, Optional, Union
 
 from aiohttp import ClientSession
 
-from .errors import NoDataFound
+from .errors import HTTPException, NoDataFound
 from .http import HTTPClient
 from .models.game import Game, PartialGame
 from .models.page import Page
@@ -205,6 +205,14 @@ class Client:
             return None
 
         return User(data["data"], http=self._http)
+
+    async def get_user_summary(self, *, url) -> User:
+        data = await self._http._get_user_summary(url)
+
+        if data.get("error"):
+            raise HTTPException
+
+        return User(data, http=self._http)
 
     async def find_user(self, query: str, *, error_on_empty: bool = True) -> Union[User, None]:
         try:

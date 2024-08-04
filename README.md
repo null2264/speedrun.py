@@ -58,6 +58,7 @@ As of writing this (2023-08-26), V2 is undocumented, may break at anytime.
 | GetCommentable          | ？     |                                  |
 | PutThreadRead           | ？     |                                  |
 | GetThread               | ？     |                                  |
+| GetUserSummary          | ？     | Incomplete                       |
 | GetUserBlocks           | ？     |                                  |
 
 #### Useful Links

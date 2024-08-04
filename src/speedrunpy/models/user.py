@@ -38,7 +38,8 @@ from ..utils import zulu_to_utc
 class PartialUser:
     def __init__(self, payload: Dict[str, Any], http: HTTPClient) -> None:
         self._http: HTTPClient = http
-        self.id: str = payload["id"]
+        self._api_version: int = 2 if payload.get("user") else 1
+        self.id: str = payload.get("id", payload["user"]["id"])
         self.is_extended = False
 
     def __str__(self) -> str:
@@ -61,19 +62,23 @@ class User(PartialUser, SRCObjectWithAssetsMixin):
         super().__init__(payload, http)
         self.is_extended = True
 
-        self.name: Name = Name(payload["names"])
+        if self._api_version == 2:  # temporary solution
+            payload = payload["user"]
+
+        self.name: Name = Name.from_payload(payload) if self._api_version == 1 else Name(international=payload["name"])
         pronouns: Union[List[str], str] = payload["pronouns"]
         self.pronouns: List[str] = pronouns.split(", ") if isinstance(pronouns, str) else pronouns
-        self.weblink: str = payload["weblink"]
-        self.name_style: Dict[str, Any] = payload["name-style"]
-        self.role: str = payload["role"]
-        self._signup: str = payload["signup"]
-        self.location: Optional[Dict[str, Any]] = payload["location"]
-        self.twitch: Optional[str] = (payload["twitch"] or {}).get("uri", None)
-        self.hitbox: Optional[str] = (payload["hitbox"] or {}).get("uri", None)
-        self.youtube: Optional[str] = (payload["youtube"] or {}).get("uri", None)
-        self.twitter: Optional[str] = (payload["twitter"] or {}).get("uri", None)
-        self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get("uri", None)
+        self.weblink: str = payload.get("weblink", "")  # FIXME: V2 - theme.url
+        self.name_style: Dict[str, Any] = payload.get("name-style", {})  # FIXME: V2 - user.color1Id and user.color2Id
+        self.role: str = payload.get("role", "user" if payload["powerLevel"] > 1 else "admin")
+        self._signup: Union[str, int] = payload.get("signup", payload["signupDate"])
+        self.location: Optional[Dict[str, Any]] = payload.get("location")  # FIXME: V2 - user.areaId
+        # FIXME: V2 - userSocialConnectionList.*
+        self.twitch: Optional[str] = (payload.get("twitch") or {}).get("uri", None)
+        self.hitbox: Optional[str] = (payload.get("hitbox") or {}).get("uri", None)
+        self.youtube: Optional[str] = (payload.get("youtube") or {}).get("uri", None)
+        self.twitter: Optional[str] = (payload.get("twitter") or {}).get("uri", None)
+        self.speedrunslive: Optional[str] = (payload.get("speedrunslive") or {}).get("uri", None)
 
     def __str__(self) -> str:
         return self.name.international or "null"
@@ -83,6 +88,9 @@ class User(PartialUser, SRCObjectWithAssetsMixin):
 
     @property
     def signup(self) -> datetime.datetime:
+        if isinstance(self._signup, int):
+            return datetime.datetime.fromtimestamp(self._signup)
+
         signup = zulu_to_utc(self._signup)
         return datetime.datetime.fromisoformat(signup)
 
