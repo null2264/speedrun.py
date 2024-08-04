@@ -65,16 +65,17 @@ async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
 
 
 class Route:
-    BASE_URL: ClassVar[str] = "https://www.speedrun.com/api/v1"
+    BASE_URL: ClassVar[str] = "https://www.speedrun.com/api"
 
-    def __init__(self, method: str, path: str, **parameters: Dict[str, Any]) -> None:
+    def __init__(self, method: str, api_version: int, path: str, **parameters: Dict[str, Any]) -> None:
         self.method: str = method
         self.path: str = path
+        self.api_version: int = api_version
         self.parameters: Dict[str, Any] = parameters
 
     @property
     def url(self) -> str:
-        url = self.BASE_URL + self.path
+        url = self.BASE_URL + f"/v{self.api_version}" + self.path
         if self.parameters:
             url += urlify(**self.parameters)
         return url
@@ -120,7 +121,7 @@ class HTTPClient:
         if self._session is None:
             self._session = await self._generate_session()
 
-        for tries in range(5):
+        for _ in range(5):  # 5 tries
             async with self._session.request(route.method, route.url, **kwargs) as response:
                 data = await json_or_text(response)
 
@@ -129,7 +130,7 @@ class HTTPClient:
 
                 retry_after: float = 60.00
 
-                if response.status == 420:
+                if response.status == 420 or response.status == 429:
                     # Handles ratelimited
                     print("Rate limited, retrying in {} seconds".format(retry_after))
                     await asyncio.sleep(retry_after)
@@ -211,14 +212,14 @@ class HTTPClient:
 
         query["_bulk"] = str(_bulk)
 
-        route = Route("GET", "/games", **query)
+        route = Route("GET", 1, "/games", **query)
 
         return self.request(route)
 
     def _game_by_id(self, *, id: str) -> Response[SpeedrunResponse]:
         query: Dict[str, Any] = {"embed": ",".join(EMBED_GAMES)}
 
-        route = Route("GET", f"/games/{id}", **query)
+        route = Route("GET", 1, f"/games/{id}", **query)
 
         return self.request(route)
 
@@ -289,7 +290,7 @@ class HTTPClient:
 
         query["_bulk"] = str(_bulk)
 
-        route = Route("GET", f"/games/{base_game_id}/derived-games", **query)
+        route = Route("GET", 1, f"/games/{base_game_id}/derived-games", **query)
 
         return self.request(route)
 
@@ -297,7 +298,7 @@ class HTTPClient:
         pass
 
     def _category_variables(self, category_id):
-        route = Route("GET", f"/categories/{category_id}/variables")
+        route = Route("GET", 1, f"/categories/{category_id}/variables")
 
         return self.request(route)
 
@@ -339,12 +340,12 @@ class HTTPClient:
         if max:
             query["max"] = max
 
-        route = Route("GET", "/users", **query)
+        route = Route("GET", 1, "/users", **query)
 
         return self.request(route)
 
     def _user_by_id(self, id: str) -> Response[SpeedrunResponse]:
-        route = Route("GET", f"/users/{id}")
+        route = Route("GET", 1, f"/users/{id}")
 
         return self.request(route)
 
@@ -353,12 +354,12 @@ class HTTPClient:
 
         query["embed"] = ",".join(EMBED_RUNS)
 
-        route = Route("GET", f"/users/{id}/personal-bests", **query)
+        route = Route("GET", 1, f"/users/{id}/personal-bests", **query)
 
         return self.request(route)
 
     def _profile(self) -> Response[SpeedrunResponse]:
-        route = Route("GET", "/profile")
+        route = Route("GET", 1, "/profile")
 
         return self.request(route)
 
@@ -406,7 +407,7 @@ class HTTPClient:
 
         query["embed"] = ",".join(EMBED_RUNS)
 
-        route = Route("GET", "/runs", **query)
+        route = Route("GET", 1, "/runs", **query)
 
         return self.request(route)
 
@@ -415,6 +416,6 @@ class HTTPClient:
 
         query["embed"] = ",".join(EMBED_RUNS)
 
-        route = Route("GET", f"/runs/{id}", **query)
+        route = Route("GET", 1, f"/runs/{id}", **query)
 
         return self.request(route)
