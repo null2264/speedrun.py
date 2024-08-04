@@ -67,15 +67,15 @@ class User(PartialUser, SRCObjectWithAssetsMixin):
         self.name_style: Dict[str, Any] = payload["name-style"]
         self.role: str = payload["role"]
         self._signup: str = payload["signup"]
-        self.location: Optional[str] = payload["location"]
+        self.location: Optional[Dict[str, Any]] = payload["location"]
         self.twitch: Optional[str] = (payload["twitch"] or {}).get("uri", None)
         self.hitbox: Optional[str] = (payload["hitbox"] or {}).get("uri", None)
         self.youtube: Optional[str] = (payload["youtube"] or {}).get("uri", None)
         self.twitter: Optional[str] = (payload["twitter"] or {}).get("uri", None)
         self.speedrunslive: Optional[str] = (payload["speedrunslive"] or {}).get("uri", None)
 
-    def __str__(self) -> Optional[str]:
-        return self.name.international
+    def __str__(self) -> str:
+        return self.name.international or "null"
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__} id={self.id} names={self.name}>"
