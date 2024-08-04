@@ -25,7 +25,7 @@ SOFTWARE.
 from __future__ import annotations
 
 import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from ..errors import NoDataFound
 from ..http import HTTPClient
@@ -62,7 +62,8 @@ class User(PartialUser, SRCObjectWithAssetsMixin):
         self.is_extended = True
 
         self.name: Name = Name(payload["names"])
-        self.pronouns: str = payload["pronouns"]
+        pronouns: Union[List[str], str] = payload["pronouns"]
+        self.pronouns: List[str] = pronouns.split(", ") if isinstance(pronouns, str) else pronouns
         self.weblink: str = payload["weblink"]
         self.name_style: Dict[str, Any] = payload["name-style"]
         self.role: str = payload["role"]
