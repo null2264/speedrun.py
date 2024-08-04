@@ -25,3 +25,5 @@ SOFTWARE.
 from __future__ import annotations
 
 MAX_PER_PAGE = 200
+HTTP_URL = "https://www.speedrun.com/"
+API_URL = "https://www.speedrun.com/api/"

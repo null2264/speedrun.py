@@ -41,6 +41,7 @@ import aiohttp
 from aiohttp import ClientResponse, ClientSession
 
 from . import __version__
+from .const import API_URL
 from .embeds import EMBED_GAMES, EMBED_LEADERBOARDS, EMBED_RUNS, FULL_EMBED_LEADERBOARDS
 from .errors import HTTPException
 from .utils import from_json, urlify
@@ -65,8 +66,6 @@ async def json_or_text(response: ClientResponse) -> Union[Dict[str, Any], str]:
 
 
 class Route:
-    BASE_URL: ClassVar[str] = "https://www.speedrun.com/api"
-
     def __init__(self, method: str, api_version: int, path: str, **parameters: Dict[str, Any]) -> None:
         self.method: str = method
         self.path: str = path
@@ -75,7 +74,7 @@ class Route:
 
     @property
     def url(self) -> str:
-        url = self.BASE_URL + f"/v{self.api_version}" + self.path
+        url = API_URL + f"v{self.api_version}" + self.path
         if self.parameters:
             url += urlify(**self.parameters)
         return url
