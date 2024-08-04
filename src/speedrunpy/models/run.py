@@ -62,7 +62,8 @@ class Run(SRCObjectWithAssetsMixin):
         self.category: Category = Category(payload["category"]["data"], http=self._http)
 
         # Stupid SR.C, empty level is [], but non-empty level is {...}, why?
-        level: Optional[Dict[str, Any]] = payload.get("level", {}).get("data")
+        _payload_level: Union[List[Any], Dict[str, Any]] = payload.get("level", [])
+        level: Optional[Dict[str, Any]] = {} if isinstance(_payload_level, list) else _payload_level.get("data")
         self.level: Optional[Level] = None
         if level:
             self.level = Level(level, http=self._http)
