@@ -7,5 +7,6 @@ async def main():
     games = await src.get_games(name="Super Mario Sunshine")
     game = games.data[0]
     print(game.id, game.name)
+    await src.close()
 
 asyncio.run(main())
