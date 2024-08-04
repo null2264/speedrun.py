@@ -32,14 +32,14 @@ __version__ = "21.8.2a"
 from typing import Literal, NamedTuple
 
 from . import utils
-from .asset import Asset
+from .models.asset import Asset
 from .client import Client
 from .errors import *
-from .game import Game
-from .name import Name
-from .page import Page
-from .user import User
-from .variable import Variable
+from .models.game import Game
+from .models.name import Name
+from .models.page import Page
+from .models.user import User
+from .models.variable import Variable
 
 
 class VersionInfo(NamedTuple):

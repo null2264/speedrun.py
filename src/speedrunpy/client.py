@@ -29,11 +29,11 @@ from typing import List, Optional, Union
 from aiohttp import ClientSession
 
 from .errors import NoDataFound
-from .game import Game, PartialGame
 from .http import HTTPClient
-from .page import Page
-from .run import Run
-from .user import User
+from .models.game import Game, PartialGame
+from .models.page import Page
+from .models.run import Run
+from .models.user import User
 
 
 class Client:

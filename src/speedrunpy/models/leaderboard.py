@@ -28,7 +28,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from .category import Category
 from .game import Game
-from .http import HTTPClient
+from ..http import HTTPClient
 from .level import Level
 from .mixin import SRCObjectMixin
 from .run import Run

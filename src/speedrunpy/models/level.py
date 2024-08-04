@@ -27,7 +27,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 from .category import Category
-from .http import HTTPClient
+from ..http import HTTPClient
 from .mixin import SRCObjectMixin
 
 

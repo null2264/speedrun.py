@@ -41,7 +41,7 @@ if TYPE_CHECKING:
 
 
 try:
-    import orjson
+    import orjson  # type: ignore - Handled by try-except
 
     JSON = orjson
 except ImportError:

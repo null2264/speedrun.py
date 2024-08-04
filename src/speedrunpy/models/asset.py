@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from .http import HTTPClient
+from ..http import HTTPClient
 
 
 __all__ = ("Asset",)

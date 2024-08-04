@@ -26,13 +26,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
-from speedrunpy.guest import Guest
-
 from . import game as _game
 from . import user as _user
 from .category import Category
 from .guest import Guest
-from .http import HTTPClient
+from ..http import HTTPClient
 from .level import Level
 from .mixin import SRCObjectWithAssetsMixin
 

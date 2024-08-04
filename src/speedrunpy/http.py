@@ -47,7 +47,7 @@ from .utils import from_json, urlify
 
 
 if TYPE_CHECKING:
-    from .types import SpeedrunPagedResponse, SpeedrunResponse
+    from .models.types import SpeedrunPagedResponse, SpeedrunResponse
 
     T = TypeVar("T")
     Response = Coroutine[Any, Any, T]
